@@ -45,8 +45,14 @@ write.csv(season, file = "~/R Working Directory/Other/eagles/season.csv")
 #RB: rushing yds, rushing att, rushing yds/att, rushing tds, carries, rush yds/game, runs of 20+ yds, receptions, recieving yds, recieving tds, fumbles
 #WR: receptions, recieving yds, yds/recp, rec tds, rec/game, fumbles
 #TE: receptions, recieving yds, yds/recp, rec tds, rec/game, fumbles
+
+#ST
 #K: field goals made, field goals att, xpmissed
+
+#DEFENSE
 #D: sacks, tackles, forced fumbles, int, assisted tackles
+
+#*!*!*!NEED TO FIGURE OUT HOW TO ADD TEAM, RANK TO TOOLTIP*!*!*!
 
 #offense ----
 #passing attempts
@@ -91,7 +97,7 @@ pass.comp$rank <- c(1:nrow(pass.comp))
 pass.yds <- season %>% filter(passyds > 0) %>% group_by(team,name,team2) %>% summarise(Passing.Yards = sum(passyds)) %>% ungroup() %>% arrange(desc(Passing.Yards))
 pass.yds$rank <- c(1:nrow(pass.yds))
 
-(pass.comp.plot <- highchart() %>%
+(pass.yds.plot <- highchart() %>%
   hc_add_series(name="Passing Yards", data = subset(pass.yds$Passing.Yards, pass.yds$rank <=40), type = "bar")  %>%
   hc_xAxis(categories = pass.yds$name) %>%
   hc_chart(zoomType = "x") %>%
@@ -110,7 +116,7 @@ pass.yds$rank <- c(1:nrow(pass.yds))
 pass.tds <- season %>% filter(pass.tds > 0) %>% group_by(team,name,team2) %>% summarise(Passing.tds = sum(pass.tds)) %>% ungroup() %>% arrange(desc(Passing.tds))
 pass.tds$rank <- c(1:nrow(pass.tds))
 
-(pass.comp.plot <- highchart() %>%
+(pass.tds.plot <- highchart() %>%
   hc_add_series(name="Passing Touchdowns", data = subset(pass.tds$Passing.tds, pass.tds$rank <=40), type = "bar")  %>%
   hc_xAxis(categories = pass.tds$name) %>%
   hc_chart(zoomType = "x") %>%
@@ -129,7 +135,7 @@ pass.tds$rank <- c(1:nrow(pass.tds))
 pass.int <- season %>% filter(pass.ints > 0) %>% group_by(team,name,team2) %>% summarise(Passing.int = sum(pass.ints)) %>% ungroup() %>% arrange(desc(Passing.int))
 pass.int$rank <- c(1:nrow(pass.int))
 
-(pass.comp.plot <- highchart() %>%
+(pass.int.plot <- highchart() %>%
   hc_add_series(name="Interceptions Thrown", data = subset(pass.int$Passing.int, pass.int$rank <=40), type = "bar")  %>%
   hc_xAxis(categories = pass.int$name) %>%
   hc_chart(zoomType = "x") %>%
@@ -143,5 +149,83 @@ pass.int$rank <- c(1:nrow(pass.int))
              href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
   hc_add_theme(hc_theme_gridlight()) %>%
   hc_legend(enabled = FALSE))
+
+#Rushing Attempts
+rush.att <- season %>% filter(rush.att > 0) %>% group_by(team,name,team2) %>% summarise(rush.att = sum(rush.att)) %>% ungroup() %>% arrange(desc(rush.att))
+rush.att$rank <- c(1:nrow(rush.att))
+
+(rush.att.plot <- highchart() %>%
+  hc_add_series(name="Rushing Attempts", data = subset(rush.att$rush.att, rush.att$rank <=40), type = "bar")  %>%
+  hc_xAxis(categories = rush.att$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Rushing Attempts - Top 40", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+#Rushing Yards
+rush.yds <- season %>% filter(rushyds > 0) %>% group_by(team,name,team2) %>% summarise(rush.yds = sum(rushyds)) %>% ungroup() %>% arrange(desc(rush.yds))
+rush.yds$rank <- c(1:nrow(rush.yds))
+
+(rush.yds.plot <- highchart() %>%
+  hc_add_series(name="Rushing Yards", data = subset(rush.yds$rush.yds, rush.yds$rank <=40), type = "bar")  %>%
+  hc_xAxis(categories = rush.yds$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Rushing Yards - Top 40", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+#Rushing Yards / Att
+rush.yds.att <- season %>% select(rushyds, rush.att, team, name, team2) %>% filter(rush.att > (4*16)) %>% group_by(team,name,team2) %>% summarise(rush.yds.att = (rushyds/rush.att)) %>% ungroup() %>% arrange(desc(rush.yds.att))
+rush.yds.att$rank <- c(1:nrow(rush.yds.att))
+rush.yds.att$rush.yds.att <- round(rush.yds.att$rush.yds.att, 2)
+
+(rush.yds.att.plot <- highchart() %>%
+  hc_add_series(name="Rushing Yards/Attempt", data = subset(rush.yds.att$rush.yds.att, rush.yds$rank <=40), type = "bar")  %>%
+  hc_xAxis(categories = rush.yds.att$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Rushing Yards / Attempt - Top 40", align="left") %>%
+  hc_subtitle(text="For players with at least 4 carriers per game, 2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+#Rushing TDs
+rush.tds <- season %>% filter(rushtds > 0) %>% group_by(team,name,team2) %>% summarise(rush.tds = sum(rushtds)) %>% ungroup() %>% arrange(desc(rush.tds))
+rush.tds$rank <- c(1:nrow(rush.tds))
+
+(rush.tds.att.plot <- highchart() %>%
+  hc_add_series(name="Rushing Touchdowns", data = subset(rush.tds$rush.tds, rush.tds$rank <=40), type = "bar")  %>%
+  hc_xAxis(categories = rush.tds$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Rushing Touchdowns - Top 40", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
 
 
