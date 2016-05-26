@@ -1,0 +1,132 @@
+---
+title: "2015 NFL Season Stats"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#packages ----
+library(dplyr)
+library(ggplot2)
+library(nflscrapR)
+library(highcharter)
+library(rvest)
+library(stringr)
+
+#load 2015 data ----
+season <- read.csv("~/R Working Directory/Other/eagles/season.csv")
+```
+
+## Offense {.tabset}
+
+### Passing Attempts
+```{r, echo = F, fig.height=20, fig.width=10}
+#passing attempts
+pass.att <- season %>% filter(pass.att > 0) %>% group_by(team,name,team2) %>% summarise(Passing.Attempts = sum(pass.att)) %>% ungroup() %>% arrange(desc(Passing.Attempts))
+pass.att$rank <- c(1:nrow(pass.att))
+
+(pass.att.plot <- highchart() %>%
+  hc_add_series(name="Passing Attempts", data = subset(pass.att$Passing.Attempts, pass.att$rank <=40), type = "bar")  %>%
+  hc_xAxis(categories = pass.att$name, color = pass.att$coloring) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Passing Attempts - Top 40 QBs", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+### Completions
+```{r, echo = F, fig.height=20, fig.width=10}
+#completions
+pass.comp <- season %>% filter(pass.comp > 0) %>% group_by(team,name,team2) %>% summarise(Passing.Completion = sum(pass.comp)) %>% ungroup() %>% arrange(desc(Passing.Completion))
+pass.comp$rank <- c(1:nrow(pass.comp))
+
+(pass.comp.plot <- highchart() %>%
+  hc_add_series(name="Completed Passes", data = subset(pass.att$Passing.Attempts, pass.att$rank <=40), type = "bar")  %>%
+  hc_xAxis(categories = pass.att$name, color = pass.att$coloring) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Completed Passes - Top 40 QBs", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+### Passing Yards
+```{r, echo=F, fig.height=20, fig.width=10}
+#passing yards
+pass.yds <- season %>% filter(passyds > 0) %>% group_by(team,name,team2) %>% summarise(Passing.Yards = sum(passyds)) %>% ungroup() %>% arrange(desc(Passing.Yards))
+pass.yds$rank <- c(1:nrow(pass.yds))
+
+(pass.comp.plot <- highchart() %>%
+  hc_add_series(name="Passing Yards", data = subset(pass.yds$Passing.Yards, pass.yds$rank <=40), type = "bar")  %>%
+  hc_xAxis(categories = pass.yds$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Passing Yards- Top 40 QBs", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+### Passing TDs
+```{r, echo=F, fig.height=20, fig.width=10}
+#Passing Touchdowns
+pass.tds <- season %>% filter(pass.tds > 0) %>% group_by(team,name,team2) %>% summarise(Passing.tds = sum(pass.tds)) %>% ungroup() %>% arrange(desc(Passing.tds))
+pass.tds$rank <- c(1:nrow(pass.tds))
+
+(pass.comp.plot <- highchart() %>%
+  hc_add_series(name="Passing Touchdowns", data = subset(pass.tds$Passing.tds, pass.tds$rank <=40), type = "bar")  %>%
+  hc_xAxis(categories = pass.tds$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Passing Touchdowns- Top 40 QBs", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+
+### Int's Thrown
+```{r, echo=F, fig.height=20, fig.width=10}
+#Interceptions thrown
+pass.int <- season %>% filter(pass.ints > 0) %>% group_by(team,name,team2) %>% summarise(Passing.int = sum(pass.ints)) %>% ungroup() %>% arrange(desc(Passing.int))
+pass.int$rank <- c(1:nrow(pass.int))
+
+(pass.comp.plot <- highchart() %>%
+  hc_add_series(name="Interceptions Thrown", data = subset(pass.int$Passing.int, pass.int$rank <=40), type = "bar")  %>%
+  hc_xAxis(categories = pass.int$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Interceptions Thrown - Top 40 QBs", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
