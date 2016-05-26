@@ -16,6 +16,9 @@ library(stringr)
 season <- read.csv("~/R Working Directory/Other/eagles/season.csv")
 ```
 
+SOme ideas for gathering and presenting NFL stats
+code available on githb: 
+
 ## Offense {.tabset}
 
 ### Passing Attempts
