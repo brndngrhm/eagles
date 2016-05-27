@@ -18,14 +18,14 @@ season <- read.csv("~/R Working Directory/Other/eagles/season.csv")
 ```
 
 Some ideas for gathering and presenting NFL stats for the upcoming season.  
-Code available on githb [here.](https://github.com/brndngrhm/eagles)  
+Code available on github [here.](https://github.com/brndngrhm/eagles)  
 Mainly uses *nflscrapR* package. More details on that [here.](https://github.com/maksimhorowitz/nflscrapR)
 
 # NFL {.tabset}
 
-## Offense {.tabset}
-
-### Passing Attempts
+## Player Stats
+### Offense {.tabset}
+#### Passing Attempts
 ```{r, echo = F, fig.height = 20, fig.width = 10}
 #passing attempts
 pass.att <- season %>% filter(pass.att > 0) %>% group_by(team,name,team2) %>% summarise(Passing.Attempts = sum(pass.att)) %>% ungroup() %>% arrange(desc(Passing.Attempts))
@@ -48,16 +48,15 @@ pass.att$rank <- c(1:nrow(pass.att))
 
 ```
 
-### Completions
+#### Completions
 ```{r, echo = F, fig.height=20, fig.width=10}
-#completions
 #completions
 pass.comp <- season %>% filter(pass.comp > 0) %>% group_by(team,name,team2) %>% summarise(Passing.Completion = sum(pass.comp)) %>% ungroup() %>% arrange(desc(Passing.Completion))
 pass.comp$rank <- c(1:nrow(pass.comp))
 
 (pass.comp.plot <- highchart() %>%
-  hc_add_series(name="Completed Passes", data = subset(pass.att$Passing.Attempts, pass.att$rank <=40), type = "bar")  %>%
-  hc_xAxis(categories = pass.att$name, color = pass.att$coloring) %>%
+  hc_add_series(name="Completed Passes", data = subset(pass.comp$Passing.Completion, pass.comp$rank <=40), type = "bar")  %>%
+  hc_xAxis(categories = pass.comp$name) %>%
   hc_chart(zoomType = "x") %>%
   hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
   hc_title(text="Completed Passes - Top 40 QBs", align="left") %>%
@@ -71,7 +70,7 @@ pass.comp$rank <- c(1:nrow(pass.comp))
   hc_legend(enabled = FALSE))
 ```
 
-### Passing Yards
+#### Passing Yards
 ```{r, echo=F, fig.height=20, fig.width=10}
 #passing yards
 pass.yds <- season %>% filter(passyds > 0) %>% group_by(team,name,team2) %>% summarise(Passing.Yards = sum(passyds)) %>% ungroup() %>% arrange(desc(Passing.Yards))
@@ -93,7 +92,7 @@ pass.yds$rank <- c(1:nrow(pass.yds))
   hc_legend(enabled = FALSE))
 ```
 
-### Passing TDs
+#### Passing TDs
 ```{r, echo=F, fig.height=20, fig.width=10}
 #Passing Touchdowns
 pass.tds <- season %>% filter(pass.tds > 0) %>% group_by(team,name,team2) %>% summarise(Passing.tds = sum(pass.tds)) %>% ungroup() %>% arrange(desc(Passing.tds))
@@ -116,7 +115,7 @@ pass.tds$rank <- c(1:nrow(pass.tds))
 ```
 
 
-### Int's Thrown
+#### Int's Thrown
 ```{r, echo=F, fig.height=20, fig.width=10}
 #Interceptions thrown
 pass.int <- season %>% filter(pass.ints > 0) %>% group_by(team,name,team2) %>% summarise(Passing.int = sum(pass.ints)) %>% ungroup() %>% arrange(desc(Passing.int))
@@ -139,7 +138,7 @@ pass.int$rank <- c(1:nrow(pass.int))
 ```
 
 
-### Rushing Attempts
+#### Rushing Attempts
 ```{r, echo=F, fig.height=20, fig.width=10}
 #Rushing Attempts
 rush.att <- season %>% filter(rush.att > 0) %>% group_by(team,name,team2) %>% summarise(rush.att = sum(rush.att)) %>% ungroup() %>% arrange(desc(rush.att))
@@ -161,7 +160,7 @@ rush.att$rank <- c(1:nrow(rush.att))
   hc_legend(enabled = FALSE))
 ```
 
-### Rushing Yards
+#### Rushing Yards
 ```{r, echo=F, fig.height=20, fig.width=10}
 #Rushing Yards
 rush.yds <- season %>% filter(rushyds > 0) %>% group_by(team,name,team2) %>% summarise(rush.yds = sum(rushyds)) %>% ungroup() %>% arrange(desc(rush.yds))
@@ -183,7 +182,7 @@ rush.yds$rank <- c(1:nrow(rush.yds))
   hc_legend(enabled = FALSE))
 ```
 
-### Rushing Yds/Att
+#### Rushing Yds/Att
 ```{r, echo=F, fig.height=20, fig.width=10}
 #Rushing Yards / Att
 rush.yds.att <- season %>% select(rushyds, rush.att, team, name, team2) %>% filter(rush.att > (4*16)) %>% group_by(team,name,team2) %>% summarise(rush.yds.att = (rushyds/rush.att)) %>% ungroup() %>% arrange(desc(rush.yds.att))
@@ -206,7 +205,7 @@ rush.yds.att$rush.yds.att <- round(rush.yds.att$rush.yds.att, 2)
   hc_legend(enabled = FALSE))
 ```
 
-### Rushing TDs
+#### Rushing TDs
 ```{r, echo=F, fig.height=20, fig.width=10}
 #Rushing TDs
 rush.tds <- season %>% filter(rushtds > 0) %>% group_by(team,name,team2) %>% summarise(rush.tds = sum(rushtds)) %>% ungroup() %>% arrange(desc(rush.tds))
@@ -230,12 +229,547 @@ rush.tds$rank <- c(1:nrow(rush.tds))
 ```
 
 
-## Defense {.tabset}
 
-## Special Teams {.tabset}
+### Defense {.tabset} 
+#### Sacks
+```{r, echo=F}
+#sacks
+sacks <- season %>% dplyr::filter(sacks > 0) %>% group_by(team,name,team2) %>% summarise(sacks = sum(sacks)) %>% ungroup() %>% arrange(desc(sacks))
+sacks$rank <- c(1:nrow(sacks))
+
+(sacks.plot <- highchart() %>%
+  hc_add_series(name="Sacks", data = subset(sacks$sacks, sacks$rank <= 40), type = "bar")  %>%
+  hc_xAxis(categories = sacks$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Sacks - Top 40", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+#### Tackles
+```{r, echo = F}
+#tackles
+tackles <- season %>% filter(tackles> 0) %>% group_by(team,name,team2) %>% summarise(tackles = sum(tackles)) %>% ungroup() %>% arrange(desc(tackles))
+tackles$rank <- c(1:nrow(tackles))
+
+(tackles.plot <- highchart() %>%
+  hc_add_series(name="Tackles", data = subset(tackles$tackles, tackles$rank <= 40), type = "bar")  %>%
+  hc_xAxis(categories = tackles$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Taclkes - Top 40", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+#### Assisted Tackles
+```{r, echo=F}
+#assisted tackles
+asst.tackles <- season %>% filter(asst.tackles> 0) %>% group_by(team,name,team2) %>% summarise(asst.tackles = sum(asst.tackles)) %>% ungroup() %>% arrange(desc(asst.tackles))
+asst.tackles$rank <- c(1:nrow(asst.tackles))
+
+(asst.tackles.plot <- highchart() %>%
+  hc_add_series(name="Assisted Tackles", data = subset(asst.tackles$asst.tackles, asst.tackles$rank <= 40), type = "bar")  %>%
+  hc_xAxis(categories = asst.tackles$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Assisted Tackles - Top 40", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+#### Forced Fumbles
+```{r, echo = F}
+#Forced Fumbles
+forced.fumbs <- season %>% filter(forced.fumbs> 0) %>% group_by(team,name,team2) %>% summarise(forced.fumbs = sum(forced.fumbs)) %>% ungroup() %>% arrange(desc(forced.fumbs))
+forced.fumbs$rank <- c(1:nrow(forced.fumbs))
+
+(tackles.plot <- highchart() %>%
+  hc_add_series(name="Forced Fumbles", data = subset(forced.fumbs$forced.fumbs, forced.fumbs$rank <= 40), type = "bar")  %>%
+  hc_xAxis(categories = forced.fumbs$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Forced Fumbles - Top 40", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+#### Interceptions
+```{r, echo = F}
+#Defensive Interceptions
+defints <- season %>% filter(defints > 0) %>% group_by(team,name,team2) %>% summarise(defints = sum(defints)) %>% ungroup() %>% arrange(desc(defints))
+defints$rank <- c(1:nrow(defints))
+
+(def.ints.plot <- highchart() %>%
+  hc_add_series(name="Defensive Interceptions", data = subset(defints$defints, defints$rank <= 40), type = "bar")  %>%
+  hc_xAxis(categories = defints$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Defensive Interceptions - Top 40", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+
+
+### Special Teams {.tabset}
+#### Field Goal Percentage
+```{r, echo=F}
+#field goal percentage
+
+fg <- season %>% select(team, name, team2, fga, fgm) %>% filter(fga > 5) %>% group_by(team,name,team2) %>% summarise(fg = (fgm/fga)) %>% ungroup() %>% arrange(desc(fg))
+fg$rank <- c(1:nrow(fg))
+
+(fg.plot <- highchart() %>%
+  hc_add_series(name="Field Goal Percentage", data = subset(fg$fg, fg$rank <= 40), type = "bar")  %>%
+  hc_xAxis(categories = fg$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Field Goal Percentage", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+
+#### Field Goal points
+```{r, echo=F}
+#field goal points
+
+fg.points <- season %>% filter(totpts.fg > 0) %>% group_by(team,name,team2) %>% summarise(fg.points = sum(totpts.fg)) %>% ungroup() %>% arrange(desc(fg.points))
+fg.points$rank <- c(1:nrow(fg.points))
+
+(fg.points.plot <- highchart() %>%
+  hc_add_series(name="Field Goal Points", data = subset(fg.points$fg.points, fg.points$rank <= 40), type = "bar")  %>%
+  hc_xAxis(categories = fg.points$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Field Goal Points", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+#### Missed Extra Points
+```{r, echo=F}
+#extra points missed
+xp.missed <- season %>% filter(xpmissed > 0) %>% group_by(team,name,team2) %>% summarise(xp.missed = sum(xpmissed)) %>% ungroup() %>% arrange(desc(xp.missed))
+xp.missed$rank <- c(1:nrow(xp.missed))
+
+(xp.missed.plot <- highchart() %>%
+  hc_add_series(name="Missed Extra Points", data = subset(xp.missed$xp.missed, xp.missed$rank <= 40), type = "bar")  %>%
+  hc_xAxis(categories = xp.missed$name) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Missed Extra Points", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+
+
+
+## Team Stats {.tabset}
+### Offense {.tabset}
+#### Passing Attempts
+```{r, echo = F, fig.height = 20, fig.width = 10}
+#passing attempts
+pass.att <- season %>% filter(pass.att > 0) %>% group_by(team) %>% summarise(Passing.Attempts = sum(pass.att)) %>% ungroup() %>% arrange(desc(Passing.Attempts))
+pass.att$rank <- c(1:nrow(pass.att))
+
+(pass.att.plot <- highchart() %>%
+  hc_add_series(name="Passing Attempts", data = pass.att$Passing.Attempts, type = "bar")  %>%
+  hc_xAxis(categories = pass.att$team, color = pass.att$coloring) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Passing Attempts", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "http://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+#### Completions
+```{r, echo = F, fig.height=20, fig.width=10}
+#completions
+pass.comp <- season %>% filter(pass.comp > 0) %>% group_by(team) %>% summarise(Passing.Completion = sum(pass.comp)) %>% ungroup() %>% arrange(desc(Passing.Completion))
+pass.comp$rank <- c(1:nrow(pass.comp))
+
+(pass.comp.plot <- highchart() %>%
+  hc_add_series(name="Completed Passes", data = pass.comp$Passing.Completion, type = "bar")  %>%
+  hc_xAxis(categories = pass.att$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Completed Passes", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+#### Passing Yards
+```{r, echo=F, fig.height=20, fig.width=10}
+#passing yards
+pass.yds <- season %>% filter(passyds > 0) %>% group_by(team) %>% summarise(Passing.Yards = sum(passyds)) %>% ungroup() %>% arrange(desc(Passing.Yards))
+pass.yds$rank <- c(1:nrow(pass.yds))
+
+(pass.yds.plot <- highchart() %>%
+  hc_add_series(name="Passing Yards", data = pass.yds$Passing.Yards, type = "bar")  %>%
+  hc_xAxis(categories = pass.yds$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Passing Yards", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+#### Passing TDs
+```{r, echo=F, fig.height=20, fig.width=10}
+#Passing Touchdowns
+pass.tds <- season %>% filter(pass.tds > 0) %>% group_by(team) %>% summarise(Passing.tds = sum(pass.tds)) %>% ungroup() %>% arrange(desc(Passing.tds))
+pass.tds$rank <- c(1:nrow(pass.tds))
+
+(pass.tds.plot <- highchart() %>%
+  hc_add_series(name="Passing Touchdowns", data = pass.tds$Passing.tds, type = "bar")  %>%
+  hc_xAxis(categories = pass.tds$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Passing Touchdowns", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+
+#### Int's Thrown
+```{r, echo=F, fig.height=20, fig.width=10}
+#Interceptions thrown
+pass.int <- season %>% filter(pass.ints > 0) %>% group_by(team) %>% summarise(Passing.int = sum(pass.ints)) %>% ungroup() %>% arrange(desc(Passing.int))
+pass.int$rank <- c(1:nrow(pass.int))
+
+(pass.int.plot <- highchart() %>%
+  hc_add_series(name="Interceptions Thrown", data = pass.int$Passing.int, type = "bar")  %>%
+  hc_xAxis(categories = pass.int$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Interceptions Thrown", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+
+#### Rushing Attempts
+```{r, echo=F, fig.height=20, fig.width=10}
+#Rushing Attempts
+rush.att <- season %>% filter(rush.att > 0) %>% group_by(team) %>% summarise(rush.att = sum(rush.att)) %>% ungroup() %>% arrange(desc(rush.att))
+rush.att$rank <- c(1:nrow(rush.att))
+
+(rush.att.plot <- highchart() %>%
+  hc_add_series(name="Rushing Attempts", data = rush.att$rush.att, type = "bar")  %>%
+  hc_xAxis(categories = rush.att$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Rushing Attempts", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+#### Rushing Yards
+```{r, echo=F, fig.height=20, fig.width=10}
+#Rushing Yards
+rush.yds <- season %>% filter(rushyds > 0) %>% group_by(team) %>% summarise(rush.yds = sum(rushyds)) %>% ungroup() %>% arrange(desc(rush.yds))
+rush.yds$rank <- c(1:nrow(rush.yds))
+
+(rush.yds.plot <- highchart() %>%
+  hc_add_series(name="Rushing Yards", data = rush.yds$rush.yds, type = "bar")  %>%
+  hc_xAxis(categories = rush.yds$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Rushing Yards", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+
+#### Rushing TDs
+```{r, echo=F, fig.height=20, fig.width=10}
+#Rushing TDs
+rush.tds <- season %>% filter(rushtds > 0) %>% group_by(team) %>% summarise(rush.tds = sum(rushtds)) %>% ungroup() %>% arrange(desc(rush.tds))
+rush.tds$rank <- c(1:nrow(rush.tds))
+
+(rush.tds.att.plot <- highchart() %>%
+  hc_add_series(name="Rushing Touchdowns", data = rush.tds$rush.tds, type = "bar")  %>%
+  hc_xAxis(categories = rush.tds$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Rushing Touchdowns", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+### Defense {.tabset}
+#### Sacks
+```{r, echo=F}
+#sacks
+sacks <- season %>% dplyr::filter(sacks > 0) %>% group_by(team) %>% summarise(sacks = sum(sacks)) %>% ungroup() %>% arrange(desc(sacks))
+sacks$rank <- c(1:nrow(sacks))
+
+(sacks.plot <- highchart() %>%
+  hc_add_series(name="Sacks", data = sacks$sacks, type = "bar")  %>%
+  hc_xAxis(categories = sacks$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Sacks", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+#### Tackles
+```{r, echo = F}
+#tackles
+tackles <- season %>% filter(tackles> 0) %>% group_by(team) %>% summarise(tackles = sum(tackles)) %>% ungroup() %>% arrange(desc(tackles))
+tackles$rank <- c(1:nrow(tackles))
+
+(tackles.plot <- highchart() %>%
+  hc_add_series(name="Tackles", data = tackles$tackles, type = "bar")  %>%
+  hc_xAxis(categories = tackles$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Taclkes", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+#### Assisted Tackles
+```{r, echo=F}
+#assisted tackles
+asst.tackles <- season %>% filter(asst.tackles> 0) %>% group_by(team) %>% summarise(asst.tackles = sum(asst.tackles)) %>% ungroup() %>% arrange(desc(asst.tackles))
+asst.tackles$rank <- c(1:nrow(asst.tackles))
+
+(asst.tackles.plot <- highchart() %>%
+  hc_add_series(name="Assisted Tackles", data = asst.tackles$asst.tackles, type = "bar")  %>%
+  hc_xAxis(categories = asst.tackles$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Assisted Tackles", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+#### Forced Fumbles
+```{r, echo = F}
+#Forced Fumbles
+forced.fumbs <- season %>% filter(forced.fumbs> 0) %>% group_by(team) %>% summarise(forced.fumbs = sum(forced.fumbs)) %>% ungroup() %>% arrange(desc(forced.fumbs))
+forced.fumbs$rank <- c(1:nrow(forced.fumbs))
+
+(tackles.plot <- highchart() %>%
+  hc_add_series(name="Forced Fumbles", data = forced.fumbs$forced.fumbs, type = "bar")  %>%
+  hc_xAxis(categories = forced.fumbs$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Forced Fumbles", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+#### Interceptions
+```{r, echo = F}
+#Defensive Interceptions
+defints <- season %>% filter(defints > 0) %>% group_by(team) %>% summarise(defints = sum(defints)) %>% ungroup() %>% arrange(desc(defints))
+defints$rank <- c(1:nrow(defints))
+
+(def.ints.plot <- highchart() %>%
+  hc_add_series(name="Defensive Interceptions", data = defints$defints, type = "bar")  %>%
+  hc_xAxis(categories = defints$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Defensive Interceptions", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+```
+
+### Special Teams {.tabset}
+#### Field Goal points
+```{r, echo=F}
+#field goal points
+
+fg.points <- season %>% filter(totpts.fg > 0) %>% group_by(team) %>% summarise(fg.points = sum(totpts.fg)) %>% ungroup() %>% arrange(desc(fg.points))
+fg.points$rank <- c(1:nrow(fg.points))
+
+(fg.points.plot <- highchart() %>%
+  hc_add_series(name="Field Goal Points", data = fg.points$fg.points, type = "bar")  %>%
+  hc_xAxis(categories = fg.points$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Field Goal Points", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
+
+#### Missed Extra Points
+```{r, echo=F}
+#extra points missed
+xp.missed <- season %>% filter(xpmissed > 0) %>% group_by(team) %>% summarise(xp.missed = sum(xpmissed)) %>% ungroup() %>% arrange(desc(xp.missed))
+xp.missed$rank <- c(1:nrow(xp.missed))
+
+(xp.missed.plot <- highchart() %>%
+  hc_add_series(name="Missed Extra Points", data = xp.missed$xp.missed, type = "bar")  %>%
+  hc_xAxis(categories = xp.missed$team) %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_title(text="Missed Extra Points", align="left") %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE))
+
+```
 
 
 # Eagles {.tabset}
-## Offense {.tabset}
-## Defense {.tabset}
-## Special Teams {.tabset}
+## Players Stats .tabset}
+### Offense {.tabset}
+### Defense {.tabset}
+### Special Teams {.tabset}
