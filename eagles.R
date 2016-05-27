@@ -10,6 +10,7 @@ library(stringr)
 library(reshape2)
 library(purrr)
 library(lubridate)
+library(xts)
 
 #get roster, assign players to offense, defense, st ----
 #will need to add to total when 2016 season starts
@@ -54,7 +55,43 @@ names(hist) <- tolower(names(hist))
 eagles.hist <- hist %>% filter(team == "PHI")
 write.csv(eagles.hist, file = "~/R Working Directory/Other/eagles/eagles.hist.csv")
 
+hist.pass.att <- eagles.hist %>% filter(pass.att > 0) %>% group_by(date, name) %>% summarise(total  = sum(pass.att))
+hist.pass.att$date <- ymd(hist.pass.att$date)
 
+bradford.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "S.Bradford"), order.by = subset(hist.pass.att$date,hist.pass.att$name == "S.Bradford"), frequency = 52)
+vick.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "M.Vick"), order.by = subset(hist.pass.att$date,hist.pass.att$name == "M.Vick"), frequency = 52)
+foles.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "N.Foles"), order.by = subset(hist.pass.att$date,hist.pass.att$name == "N.Foles"), frequency = 52)
+sanchez.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "M.Sanchez"), order.by = subset(hist.pass.att$date,hist.pass.att$name == "M.Sanchez"), frequency = 52)
+barkley.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "M.Barkley"), order.by = subset(hist.pass.att$date,hist.pass.att$name == "M.Barkley"), frequency = 52)
+smith.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "B.Smith"), order.by = subset(hist.pass.att$date,hist.pass.att$name == "B.Smith"), frequency = 52)
+
+names(bradford.ts)[1] <- "Bradford"
+names(vick.ts)[1] <- "Vick"
+names(foles.ts)[1] <- "Foles"
+names(sanchez.ts)[1] <- "Sanchez"
+names(barkley.ts)[1] <- "Barkley"
+names(smith.ts)[1] <- "Smith"
+
+highchart(type = "chart") %>% 
+  hc_add_series_xts(vick.ts, id = "Vick", name= "Vick") %>%
+  hc_add_series_xts(foles.ts, id = "Foles", name = "Foles") %>%
+  hc_add_series_xts(barkley.ts, id = "Barkley", name = "Barkley") %>%
+  hc_add_series_xts(sanchez.ts, id = "Sanchez", name = "Sanchez") %>%
+  hc_add_series_xts(bradford.ts, id = "Bradford") %>%
+  hc_add_series_xts(smith.ts, id = "Smith", name = "Smith") %>%
+  hc_rangeSelector(inputEnabled = T) %>% 
+  hc_scrollbar(enabled = FALSE) %>%
+  hc_add_theme(hc_theme_gridlight()) %>% 
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T)%>%
+  hc_title(text="Historical Passing Attempts", align="left") %>%
+  hc_subtitle(text="2009-2015", align="left") %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = T)
 
 #ideas -----
 #offense: 
