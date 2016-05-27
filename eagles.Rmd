@@ -422,6 +422,7 @@ xp.missed$rank <- c(1:nrow(xp.missed))
 
 
 
+
 ## Team Stats {.tabset}
 ### Offense {.tabset}
 #### Passing Attempts
@@ -768,8 +769,11 @@ xp.missed$rank <- c(1:nrow(xp.missed))
 ```
 
 
+
 # Eagles {.tabset}
 ## Players Stats .tabset}
 ### Offense {.tabset}
 ### Defense {.tabset}
 ### Special Teams {.tabset}
+
+##Time Series Stuff .tabset}
