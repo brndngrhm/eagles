@@ -9,6 +9,7 @@ library(rvest)
 library(stringr)
 library(reshape2)
 library(purrr)
+library(lubridate)
 
 #get roster, assign players to offense, defense, st ----
 #will need to add to total when 2016 season starts
@@ -40,20 +41,33 @@ season$team2[season$team == "PHI"] <- "PHL"
 season$name <- as.character(season$name)
 write.csv(season, file = "~/R Working Directory/Other/eagles/season.csv")
 
-#ideas
+#load historical data ----
+player.game.2015 <- season_playergame(2015)
+player.game.2014 <- season_playergame(2014)
+player.game.2013 <- season_playergame(2013)
+player.game.2012 <- season_playergame(2012)
+player.game.2011 <- season_playergame(2011)
+player.game.2010 <- season_playergame(2010)
+player.game.2009 <- season_playergame(2009)
+hist <- rbind(player.game.2015, player.game.2014, player.game.2013, player.game.2012, player.game.2011, player.game.2010, player.game.2009)
+names(hist) <- tolower(names(hist))
+eagles.hist <- hist %>% filter(team == "PHI")
+write.csv(eagles.hist, file = "~/R Working Directory/Other/eagles/eagles.hist.csv")
+
+
+
+#ideas -----
 #offense: 
 #QB: passing yards, passing attempts, yds/passing attempt, pass completions, complretion rate, ints, passing tds, rushing yards,  yds/rushing attempt,  rushing tds, qb rating (https://en.wikipedia.org/wiki/Passer_rating)
 #RB: rushing yds, rushing att, rushing yds/att, rushing tds, carries, rush yds/game, runs of 20+ yds, receptions, recieving yds, recieving tds, fumbles
 #WR: receptions, recieving yds, yds/recp, rec tds, rec/game, fumbles
 #TE: receptions, recieving yds, yds/recp, rec tds, rec/game, fumbles
-
 #ST
 #K: field goals made, field goals att, xpmissed
-
 #DEFENSE
 #D: sacks, tackles, forced fumbles, int, assisted tackles
 
-#*!*!*!NEED TO FIGURE OUT HOW TO ADD TEAM, RANK TO TOOLTIP*!*!*!
+#*!*!*! NEED TO FIGURE OUT HOW TO ADD TEAM, RANK TO TOOLTIP *!*!*!
 
 #NFL LEVEL ----
 #PLAYERS ----
