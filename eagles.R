@@ -43,6 +43,8 @@ write.csv(eagles.hist, file = "~/R Working Directory/Other/eagles/eagles.hist.cs
 # load data ----
 season.2015.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/season.2015.csv")
 season.2015 <- as.data.frame(read.csv(text = season.2015.x, strip.white = T))
+phl.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/phl.csv")
+phl <- as.data.frame(read.csv(text = phl.x, strip.white = T))
 eagles.hist.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/eagles.hist.csv")
 eagles.hist <- as.data.frame(read.csv(text = eagles.hist.x, strip.white = T))
 rm(season.2015.x, eagles.hist.x)
