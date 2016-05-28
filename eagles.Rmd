@@ -75,7 +75,7 @@ pass.comp <- season.2015 %>% dplyr::filter(pass.comp > 0) %>% group_by(team,name
 pass.comp$rank <- c(1:nrow(pass.comp))
 
 (pass.comp.plot <- hc_params %>%
-  hc_add_series(name="Completed Passes", data = subset(pass.comp$Passing.Attempts, pass.comp$rank <=top.n), type = plot.type)  %>%
+  hc_add_series(name="Completed Passes", data = subset(pass.comp$Passing.Completion, pass.comp$rank <= top.n), type = plot.type)  %>%
   hc_xAxis(categories = pass.comp$name) %>%
   hc_title(text=paste("Completed Passes - Top",top.n, sep=" "), align= alignment))
 ```
@@ -464,7 +464,7 @@ fumbs$rank <- c(1:nrow(fumbs))
 
 (fumbs.plot <- hc_params %>%
   hc_add_series(name="Fumbles", data = subset(fumbs$fumbs, fumbs$rank <=top.n), type = plot.type)  %>%
-  hc_xAxis(categories = fumbs$name)  %>%
+  hc_xAxis(categories = fumbs$team)  %>%
   hc_title(text=paste("Fumbles - Top",top.n, sep=" "), align= alignment))
 ```
 
