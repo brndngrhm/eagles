@@ -479,7 +479,7 @@ qb.melt <- melt(qb, id.vars = "Name")
 (qb.plot <- hc_params %>%
   hc_add_series(name="Bradford", data = subset(qb.melt$value, qb.melt$Name == "S.Bradford"), type = plot.type, colorByPoint = T)  %>%
   hc_xAxis(categories = qb.melt$variable) %>%
-  hc_title(text = "Sam Bradford", align = alignment))
+  hc_title(text = paste("Sam Bradford: ",qb.melt[4,3], "Passing Yards", by=" "), align = alignment))
 
 pass.att <- phl %>% dplyr::filter(pass.att > 0) %>% group_by(name) %>% summarise(Passing.Attempts = sum(pass.att)) %>% ungroup() %>% arrange(desc(Passing.Attempts))
 pass.att$rank <- c(1:nrow(pass.att))
