@@ -17,13 +17,16 @@ library(reshape2)
 library(purrr)
 library(lubridate)
 library(xts)
+library(knitr)
 
 # load data
 season.2015.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/season.2015.csv")
 season.2015 <- as.data.frame(read.csv(text = season.2015.x, strip.white = T))
+phl.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/phl.csv")
+phl <- as.data.frame(read.csv(text = phl.x, strip.white = T))
 eagles.hist.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/eagles.hist.csv")
 eagles.hist <- as.data.frame(read.csv(text = eagles.hist.x, strip.white = T))
-rm(season.2015.x, eagles.hist.x)
+rm(season.2015.x, eagles.hist.x, phl.x)
 
 # global plotting parameters 
 hc_params <- highchart() %>%
@@ -606,11 +609,44 @@ xp.missed$rank <- c(1:nrow(xp.missed))
 
 
 # Eagles {.tabset}
-## Players Stats {.tabset}
-### Offense {.tabset}
-### Defense {.tabset}
-### Special Teams {.tabset}
-##Time Series Stuff {.tabset}
+## Offense {.tabset}
+### QBs {.tabset}
+#### Bradford
+```{r, echo=F}
+qb <- phl %>% select(name, pass.att, passyds, pass.tds, pass.ints, pass.ints, fumbslost, totalfumbs, rushyds) %>% dplyr::filter(name == "S.Bradford" |  name == "M.Sanchez")
+names(qb)[1] <- "Name"
+names(qb)[2] <- "Passing Attempts"
+names(qb)[3] <- "Passing Yards"
+names(qb)[4] <- "Touchdown Passes"
+names(qb)[5] <- "Interceptions"
+names(qb)[6] <- "Fumbles Lost"
+names(qb)[7] <- "Total Fumbles"
+names(qb)[8] <- "Rushing Yards"
+qb.melt <- melt(qb, id.vars = "Name")
+
+(qb.plot <- hc_params %>%
+  hc_add_series(name="Bradford", data = subset(qb.melt$value, qb.melt$Name == "S.Bradford"), type = plot.type, colorByPoint = T)  %>%
+  hc_xAxis(categories = subset(qb.melt$variable, qb.melt$Name == "S.Bradford")) %>%
+  hc_title(text = "Sam Bradford", align = alignment))
+knitr::kable(qb, col.names = c("", "Passing Attempts", "Passing Yards", "Touchdown Passes", "Interceptions", "Fumbles", "Lost Fumbles", "Rushing Yards"))
+```
+
+#### Sanchez
+```{r, echo=F}
+(qb.plot <- hc_params %>%
+  hc_add_series(name="Sanchez", data = subset(qb.melt$value, qb.melt$Name == "M.Sanchez"), type = plot.type, colorByPoint = T)  %>%
+  hc_xAxis(categories = subset(qb.melt$variable, qb.melt$Name == "S.Bradford")) %>%
+  hc_title(text = "Mark Sanchez", align = alignment))
+knitr::kable(qb, col.names = c("", "Passing Attempts", "Passing Yards", "Touchdown Passes", "Interceptions", "Fumbles", "Lost Fumbles", "Rushing Yards"))
+
+
+```
+
+
+
+## Defense {.tabset}
+## Special Teams {.tabset}
+## Time Series Stuff {.tabset}
 ### Passing Attempts Since 2009
 ```{r, echo = F}
 hist.pass.att <- eagles.hist %>% filter(pass.att > 0) %>% group_by(date, name) %>% summarise(total  = sum(pass.att))
