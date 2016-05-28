@@ -37,7 +37,9 @@ hc_params <- highchart() %>%
   hc_add_theme(hc_theme_gridlight()) %>%
   hc_legend(enabled = FALSE) %>%
   hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
-  hc_yAxis(title=" ")
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE,
+               filename = "plot_data")
 
 top.n <- 40          #how many names to show on axis
 plot.type <- "bar"   #type of plot
@@ -357,7 +359,8 @@ xp.missed$rank <- c(1:nrow(xp.missed))
 ## Team Stats {.tabset}
 ### Offense {.tabset}
 #### Passing Attempts
-```{r, echo = F, fig.height = 20, fig.width = 10}
+```{r, echo = F, fig.height = 20, fig.width = 10 }
+
 #passing attempts
 pass.att <- season.2015 %>% dplyr::filter(pass.att > 0) %>% group_by(team) %>% summarise(Passing.Attempts = sum(pass.att)) %>% ungroup() %>% arrange(desc(Passing.Attempts))
 pass.att$rank <- c(1:nrow(pass.att))
