@@ -135,9 +135,9 @@ rec.yds <- season.2015 %>% dplyr::filter(recyds > 0) %>% group_by(team,name,team
 rec.yds$rank <- c(1:nrow(rec.yds))
 
 (rec.yds.plot <- hc_params %>%
-  hc_add_series(name="Reception Yards", data = subset(rec.yds$rec.yds, rec.yds$rank <=top.n), type = plot.type)  %>%
+  hc_add_series(name="Recieving Yards", data = subset(rec.yds$rec.yds, rec.yds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = rec.yds$name) %>%
-  hc_title(text=paste("Reception Yards - Top",top.n, sep=" "), align= alignment))
+  hc_title(text=paste("Recieving Yards - Top",top.n, sep=" "), align= alignment))
 
 ```
 
@@ -161,9 +161,9 @@ rec.tds <- season.2015 %>% dplyr::filter(rec.tds > 0) %>% group_by(team,name,tea
 rec.tds$rank <- c(1:nrow(rec.tds))
 
 (rec.tds.plot <- hc_params %>%
-  hc_add_series(name="Reception TDs", data = subset(rec.tds$rec.tds, rec.tds$rank <=top.n), type = plot.type)  %>%
+  hc_add_series(name="Recieving TDs", data = subset(rec.tds$rec.tds, rec.tds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = rec.tds$name) %>%
-  hc_title(text=paste("Reception Touchdowns - Top",top.n, sep=" "), align= alignment))
+  hc_title(text=paste("Recieving Touchdowns - Top",top.n, sep=" "), align= alignment))
 
 
 ```
@@ -436,9 +436,9 @@ rec.yds <- season.2015 %>% dplyr::filter(recyds > 0) %>% group_by(team) %>% summ
 rec.yds$rank <- c(1:nrow(rec.yds))
 
 (rec.yds.plot <- hc_params %>%
-  hc_add_series(name="Reception Yards", data = subset(rec.yds$rec.yds, rec.yds$rank <=top.n), type = plot.type)  %>%
+  hc_add_series(name="Recieving Yards", data = subset(rec.yds$rec.yds, rec.yds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = rec.yds$team) %>%
-  hc_title(text=paste("Reception Yards - Top",top.n, sep=" "), align= alignment))
+  hc_title(text=paste("Recieving Yards - Top",top.n, sep=" "), align= alignment))
 ```
 
 #### Recieving TDs
@@ -448,9 +448,9 @@ rec.tds <- season.2015 %>% dplyr::filter(rec.tds > 0) %>% group_by(team) %>% sum
 rec.tds$rank <- c(1:nrow(rec.tds))
 
 (rec.tds.plot <- hc_params %>%
-  hc_add_series(name="Reception TDs", data = subset(rec.tds$rec.tds, rec.tds$rank <=top.n), type = plot.type)  %>%
+  hc_add_series(name="Recieving TDs", data = subset(rec.tds$rec.tds, rec.tds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = rec.tds$team)  %>%
-  hc_title(text=paste("Reception Touchdowns - Top",top.n, sep=" "), align= alignment))
+  hc_title(text=paste("Recieving Touchdowns - Top",top.n, sep=" "), align= alignment))
 ```
 
 #### Fumbles
