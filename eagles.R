@@ -1,6 +1,6 @@
 # 2015 NFL & Eagles Team and Player stats
 # Run "packages" code chunk then start at line 42 to replicate plots
-# *!*!*! NEED TO FIGURE OUT HOW TO MANUALLY DEFINE PLOT SIZE, COLOR PHL, & ADD TEAM + RANK TO TOOLTIP *!*!*!
+# *!*!*! NEED TO FIGURE OUT HOW TO MANUALLY DEFINE PLOT SIZE, COLOR PHL, allow exporting of data & ADD TEAM + RANK TO TOOLTIP *!*!*!
 # want to add qb rating, time of possession, offensive plays, offensive/defensive time on field, points scored
 #great highcharter reference: http://rpackages.ianhowson.com/cran/highcharter/
 
@@ -23,6 +23,9 @@ season.2015$team2 <- "other"
 season.2015$team2[season.2015$team == "PHI"] <- "PHL"
 season.2015$name <- as.character(season.2015$name)
 write.csv(season.2015, file = "~/R Working Directory/Other/eagles/season.2015.csv")
+
+phl <- season.2015 %>% dplyr::filter(team == "PHI")
+write.csv(phl, file = "~/R Working Directory/Other/eagles/phl.csv")
 
 # download historical data ----
 player.game.2015 <- season_playergame(2015)
