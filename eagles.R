@@ -21,8 +21,6 @@ season.2015$team2[season.2015$team == "PHI"] <- "PHL"
 season.2015$name <- as.character(season.2015$name)
 write.csv(season.2015, file = "~/R Working Directory/Other/eagles/season.2015.csv")
 
-------------------------
-
 # download historical data ----
 player.game.2015 <- season_playergame(2015)
 player.game.2014 <- season_playergame(2014)
@@ -36,19 +34,14 @@ names(hist) <- tolower(names(hist))
 eagles.hist <- hist %>% dplyr::filter(team == "PHI")
 write.csv(eagles.hist, file = "~/R Working Directory/Other/eagles/eagles.hist.csv")
 
-------------------------
-
 # load data ----
 season.2015.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/season.2015.csv")
 season.2015 <- as.data.frame(read.csv(text = season.2015.x, strip.white = T))
-  
 eagles.hist.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/eagles.hist.csv")
 eagles.hist <- as.data.frame(read.csv(text = eagles.hist.x, strip.white = T))
-
-------------------------
+rm(season.2015.x, eagles.hist.x)
 
 # global plotting parameters ----
-
 hc_params <- highchart() %>%
   hc_chart(zoomType = "x") %>%
   hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
@@ -66,10 +59,9 @@ top.n <- 40          #how many names to show on axis
 plot.type <- "bar"   #type of plot
 alignment <- "left"  #subtitle alignment
 
---------------------------------------------------
 
 # *!*!*! NEED TO FIGURE OUT HOW TO SHOW ALL NAMES/TEAMS ON AXIS & ADD TEAM + RANK TO TOOLTIP *!*!*!
-# want to add qb rating, completions, time of possession, offensive plays, offensive/defensive time on field,  points scored, 
+# want to add qb rating, time of possession, offensive plays, offensive/defensive time on field, points scored, 
   
 
 # NFL LEVEL ----
@@ -89,9 +81,10 @@ pass.comp <- season.2015 %>% dplyr::filter(pass.comp > 0) %>% group_by(team,name
 pass.comp$rank <- c(1:nrow(pass.comp))
 
 (pass.comp.plot <- hc_params %>%
-  hc_add_series(name="Completed Passes", data = subset(pass.att$Passing.Attempts, pass.att$rank <=top.n), type = plot.type)  %>%
-  hc_xAxis(categories = pass.att$name) %>%
+  hc_add_series(name="Completed Passes", data = subset(pass.comp$Passing.Attempts, pass.comp$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = pass.comp$name) %>%
   hc_title(text=paste("Completed Passes - Top",top.n, sep=" "), align= alignment))
+
 #passing yards
 pass.yds <- season.2015 %>% dplyr::filter(passyds > 0) %>% group_by(team,name,team2) %>% summarise(Passing.Yards = sum(passyds)) %>% ungroup() %>% arrange(desc(Passing.Yards))
 pass.yds$rank <- c(1:nrow(pass.yds))
@@ -212,7 +205,7 @@ rush.tds$rank <- c(1:nrow(rush.tds))
   hc_title(text=paste("Rushing Touchdowns - Top",top.n, sep=" "), align= alignment))
 # defense ----
 #sacks
-sacks <- season.2015 %>% dplyr::dplyr::filter(sacks > 0) %>% group_by(team,name,team2) %>% summarise(sacks = sum(sacks)) %>% ungroup() %>% arrange(desc(sacks))
+sacks <- season.2015 %>% dplyr::filter(sacks > 0) %>% group_by(team,name,team2) %>% summarise(sacks = sum(sacks)) %>% ungroup() %>% arrange(desc(sacks))
 sacks$rank <- c(1:nrow(sacks))
 
 (sacks.plot <- hc_params %>%
@@ -283,7 +276,7 @@ xp.missed$rank <- c(1:nrow(xp.missed))
   hc_xAxis(categories = xp.missed$name)  %>%
   hc_title(text=paste("Missed Extra Points - Top",top.n, sep=" "), align= alignment))
 
-# TEAMS ----
+# TEAM LEVEL ----
 # offense ----
 #passing attempts
 pass.att <- season.2015 %>% dplyr::filter(pass.att > 0) %>% group_by(team) %>% summarise(Passing.Attempts = sum(pass.att)) %>% ungroup() %>% arrange(desc(Passing.Attempts))
@@ -402,7 +395,7 @@ rush.tds$rank <- c(1:nrow(rush.tds))
   hc_xAxis(categories = rush.tds$team)  %>%
   hc_title(text=paste("Rushing Touchdowns - Top",top.n, sep=" "), align= alignment))
 # defense ----
-sacks <- season.2015 %>% dplyr::dplyr::filter(sacks > 0) %>% group_by(team) %>% summarise(sacks = sum(sacks)) %>% ungroup() %>% arrange(desc(sacks))
+sacks <- season.2015 %>% dplyr::filter(sacks > 0) %>% group_by(team) %>% summarise(sacks = sum(sacks)) %>% ungroup() %>% arrange(desc(sacks))
 sacks$rank <- c(1:nrow(sacks))
 
 (sacks.plot <- hc_params %>%
