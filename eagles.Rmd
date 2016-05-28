@@ -128,7 +128,7 @@ recept$rank <- c(1:nrow(recept))
 
 ```
 
-#### Reception Yards
+#### Recieving Yards
 ```{r, echo = F}
 #reception yards
 rec.yds <- season.2015 %>% dplyr::filter(recyds > 0) %>% group_by(team,name,team2) %>% summarise(rec.yds = sum(recyds)) %>% ungroup() %>% arrange(desc(rec.yds))
@@ -154,7 +154,7 @@ reclng$rank <- c(1:nrow(reclng))
 
 ```
 
-#### Reception TDs
+#### Recieving TDs
 ```{r, echo=F}
 #reception tds
 rec.tds <- season.2015 %>% dplyr::filter(rec.tds > 0) %>% group_by(team,name,team2) %>% summarise(rec.tds = sum(rec.tds)) %>% ungroup() %>% arrange(desc(rec.tds))
@@ -429,7 +429,7 @@ recept$rank <- c(1:nrow(recept))
   hc_title(text=paste("Receptions - Top",top.n, sep=" "), align= alignment))
 ```
 
-#### Reception Yards
+#### Recieving Yards
 ```{r, echo = F}
 #reception yards
 rec.yds <- season.2015 %>% dplyr::filter(recyds > 0) %>% group_by(team) %>% summarise(rec.yds = sum(recyds)) %>% ungroup() %>% arrange(desc(rec.yds))
@@ -441,7 +441,7 @@ rec.yds$rank <- c(1:nrow(rec.yds))
   hc_title(text=paste("Reception Yards - Top",top.n, sep=" "), align= alignment))
 ```
 
-#### Reception TDs
+#### Recieving TDs
 ```{r, echo=F}
 #reception tds
 rec.tds <- season.2015 %>% dplyr::filter(rec.tds > 0) %>% group_by(team) %>% summarise(rec.tds = sum(rec.tds)) %>% ungroup() %>% arrange(desc(rec.tds))
