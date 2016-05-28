@@ -5,22 +5,44 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-#packages ----
+# packages
 library(dplyr)
 library(ggplot2)
 library(nflscrapR)
 library(highcharter)
 library(rvest)
+library(RCurl)
 library(stringr)
 library(reshape2)
 library(purrr)
 library(lubridate)
 library(xts)
 
-#load 2015 data ----
-season <- read.csv("~/R Working Directory/Other/eagles/season.csv")
+# load data
+season.2015.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/season.2015.csv")
+season.2015 <- as.data.frame(read.csv(text = season.2015.x, strip.white = T))
+eagles.hist.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/eagles.hist.csv")
+eagles.hist <- as.data.frame(read.csv(text = eagles.hist.x, strip.white = T))
+rm(season.2015.x, eagles.hist.x)
 
-eagles.hist <- read.csv("~/R Working Directory/Other/eagles/eagles.hist.csv")
+# global plotting parameters 
+hc_params <- highchart() %>%
+  hc_chart(zoomType = "x") %>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
+  hc_yAxis(title=" ") %>%
+  hc_exporting(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE,
+             text = "NFL Data from nflscrapR",
+             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
+  hc_add_theme(hc_theme_gridlight()) %>%
+  hc_legend(enabled = FALSE) %>%
+  hc_subtitle(text="2015 Season (Click & Drag to Zoom)", align="left") %>%
+  hc_yAxis(title=" ")
+
+top.n <- 40          #how many names to show on axis
+plot.type <- "bar"   #type of plot
+alignment <- "left"  #subtitle alignment
+
 ```
 
 Some ideas for gathering and presenting NFL stats for the upcoming season.  
@@ -29,7 +51,6 @@ Data obtained using the *nflscrapR* package. More details on that [here.](https:
 Plots done using the *Highcharter* package.  More details on that [here.](http://jkunst.com/highcharter/)
 
 # NFL {.tabset}
-
 ## Player Stats
 ### Offense {.tabset}
 #### Passing Attempts
