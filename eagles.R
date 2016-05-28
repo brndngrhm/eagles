@@ -1,5 +1,7 @@
 # 2015 NFL & Eagles Team and Player stats
 # Run "packages" code chunk then start at line 42 to replicate plots
+# *!*!*! NEED TO FIGURE OUT HOW TO SHOW ALL NAMES/TEAMS ON AXIS & ADD TEAM + RANK TO TOOLTIP *!*!*!
+# want to add qb rating, time of possession, offensive plays, offensive/defensive time on field, points scored, 
 
 # packages ----
 library(dplyr)
@@ -58,11 +60,6 @@ hc_params <- highchart() %>%
 top.n <- 40          #how many names to show on axis
 plot.type <- "bar"   #type of plot
 alignment <- "left"  #subtitle alignment
-
-
-# *!*!*! NEED TO FIGURE OUT HOW TO SHOW ALL NAMES/TEAMS ON AXIS & ADD TEAM + RANK TO TOOLTIP *!*!*!
-# want to add qb rating, time of possession, offensive plays, offensive/defensive time on field, points scored, 
-  
 
 # NFL LEVEL ----
 # PLAYERS 
@@ -395,6 +392,7 @@ rush.tds$rank <- c(1:nrow(rush.tds))
   hc_xAxis(categories = rush.tds$team)  %>%
   hc_title(text=paste("Rushing Touchdowns - Top",top.n, sep=" "), align= alignment))
 # defense ----
+#sacks
 sacks <- season.2015 %>% dplyr::filter(sacks > 0) %>% group_by(team) %>% summarise(sacks = sum(sacks)) %>% ungroup() %>% arrange(desc(sacks))
 sacks$rank <- c(1:nrow(sacks))
 
@@ -463,7 +461,7 @@ xp.missed$rank <- c(1:nrow(xp.missed))
 # special teams ----
 # time series ----
 #historical attempted passes
-hist.pass.att <- eagles.hist %>% dplyr::filter(pass.att > 0) %>% group_by(date, name) %>% summarise(total  = sum(pass.att))
+hist.pass.att <- eagles.hist %>% dplyr::filter(pass.att > 1) %>% group_by(date, name) %>% summarise(total  = sum(pass.att))
 hist.pass.att$date <- ymd(hist.pass.att$date)
 
 bradford.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "S.Bradford"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "S.Bradford"), frequency = 52)
@@ -471,19 +469,27 @@ vick.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "M.Vick"), orde
 foles.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "N.Foles"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "N.Foles"), frequency = 52)
 sanchez.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "M.Sanchez"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "M.Sanchez"), frequency = 52)
 barkley.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "M.Barkley"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "M.Barkley"), frequency = 52)
-smith.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "B.Smith"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "B.Smith"), frequency = 52)
+mcnabb.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "D.McNabb"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "D.McNabb"), frequency = 52)
+kolb.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "K.Kolb"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "K.Kolb"), frequency = 52)
+kafka.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "M.Kafaka"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "M.Kafaka"), frequency = 52)
+edwards.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "T.Edwards"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "T.Edwards"), frequency = 52)
+young.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "V.Young"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "V.Young"), frequency = 52)
 
-highchart(type = "chart") %>% 
+highchart(type = "stock") %>% 
   hc_add_series_xts(vick.ts, id = "Vick", name= "Vick") %>%
   hc_add_series_xts(foles.ts, id = "Foles", name = "Foles") %>%
   hc_add_series_xts(barkley.ts, id = "Barkley", name = "Barkley") %>% 
-  hc_add_series_xts(smith.ts, id = "Smith", name = "Smith")%>%
+  hc_add_series_xts(kafka.ts, id = "Kafka", name = "Kafka")%>%
   hc_add_series_xts(sanchez.ts, id = "Sanchez", name = "Sanchez") %>%
   hc_add_series_xts(bradford.ts, id = "Bradford", name = "Bradford") %>%
+  hc_add_series_xts(mcnabb.ts, id = "McNabb", name = "McNabb") %>%
+  hc_add_series_xts(kolb.ts, id = "Kolb", name = "Kolb") %>%
+  hc_add_series_xts(edwards.ts, id = "Edwards", name = "Edwards") %>%
+  hc_add_series_xts(young.ts, id = "Young", name = "Young") %>%
   hc_rangeSelector(inputEnabled = T) %>% 
   hc_scrollbar(enabled = FALSE) %>%
   hc_add_theme(hc_theme_gridlight()) %>% 
-  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T)%>%
+  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T) %>%
   hc_title(text="Historical Passing Attempts", align="left") %>%
   hc_subtitle(text="2009-2015", align="left") %>%
   hc_yAxis(title=" ") %>%
