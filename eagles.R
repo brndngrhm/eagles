@@ -463,23 +463,33 @@ xp.missed$rank <- c(1:nrow(xp.missed))
 
 # EAGLES ----
 # offense ----
-#passing attempts
-
-qb <- phl %>% select(name, pass.att, passyds, pass.tds, pass.ints, pass.ints, fumbslost, totalfumbs, rushyds) %>% dplyr::filter(name == "S.Bradford" |  name == "M.Sanchez")
+#QBs
+qb <- phl %>% select(name, pass.att, passyds, pass.tds, pass.ints, pass.ints, fumbslost, totalfumbs, rushyds) %>% dplyr::filter(name == "S.Bradford" |  name == "M.Sanchez") %>% arrange(desc(name))
+qb$yds.att <- qb$passyds/qb$pass.att
+qb <- qb %>% select(name, pass.att, passyds, pass.tds, yds.att, pass.ints, rushyds, totalfumbs, fumbslost)
 names(qb)[1] <- "Name"
 names(qb)[2] <- "Passing Attempts"
 names(qb)[3] <- "Passing Yards"
 names(qb)[4] <- "Touchdown Passes"
-names(qb)[5] <- "Interceptions"
-names(qb)[6] <- "Fumbles Lost"
-names(qb)[7] <- "Total Fumbles"
-names(qb)[8] <- "Rushing Yards"
+names(qb)[5] <- "Yards Per Pass"
+names(qb)[6] <- "Interceptions"
+names(qb)[7] <- "Rushing Yards"
+names(qb)[8] <- "Fumbless"
+names(qb)[9] <- "Lost Fumbles"
 qb.melt <- melt(qb, id.vars = "Name")
 
-(qb.plot <- hc_params %>%
-  hc_add_series(name="Bradford", data = subset(qb.melt$value, qb.melt$Name == "S.Bradford"), type = plot.type, colorByPoint = T)  %>%
-  hc_xAxis(categories = qb.melt$variable) %>%
-  hc_title(text = paste("Sam Bradford: ",qb.melt[4,3], "Passing Yards", by=" "), align = alignment))
+(bradford.plot <- hc_params %>%
+  hc_add_series(name="Bradford", data = subset(qb.melt$value, qb.melt$Name == "S.Bradford" & qb.melt$variable != "Passing Yards" & qb.melt$variable != "Passing Attempts"), type = plot.type) %>%
+  hc_xAxis(categories = subset(qb.melt$variable, qb.melt$Name == "S.Bradford" & qb.melt$variable != "Passing Yards"& qb.melt$variable != "Passing Attempts")) %>%
+  hc_title(text = paste("Sam Bradford:",qb.melt[4,3], "Passing Yards,", qb.melt[2,3], "Passing Attempts", by =" "), align = alignment))
+
+(sanchez.plot <- hc_params %>%
+  hc_add_series(name="Sanchez", data = subset(qb.melt$value, qb.melt$Name == "M.Sanchez"& qb.melt$variable != "Passing Yards"& qb.melt$variable != "Passing Attempts"), type = plot.type)  %>%
+  hc_xAxis(categories = subset(qb.melt$variable, qb.melt$Name == "S.Bradford" & qb.melt$variable != "Passing Yards"& qb.melt$variable != "Passing Attempts")) %>%
+  hc_title(text = paste("Mark Sanchez:",qb.melt[3,3], "Passing Yards,", qb.melt[1,3], "Passing Attempts", by =" "), align = alignment))
+
+
+
 
 pass.att <- phl %>% dplyr::filter(pass.att > 0) %>% group_by(name) %>% summarise(Passing.Attempts = sum(pass.att)) %>% ungroup() %>% arrange(desc(Passing.Attempts))
 pass.att$rank <- c(1:nrow(pass.att))
