@@ -47,7 +47,7 @@ phl.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/phl.c
 phl <- as.data.frame(read.csv(text = phl.x, strip.white = T))
 eagles.hist.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/eagles.hist.csv")
 eagles.hist <- as.data.frame(read.csv(text = eagles.hist.x, strip.white = T))
-rm(season.2015.x, eagles.hist.x)
+rm(season.2015.x, eagles.hist.x, phl.x)
 
 # global plotting parameters ----
 hc_params <- highchart() %>%
@@ -463,6 +463,154 @@ xp.missed$rank <- c(1:nrow(xp.missed))
 
 # EAGLES ----
 # offense ----
+#passing attempts
+
+qb <- phl %>% select(name, pass.att, passyds, pass.tds, pass.ints, pass.ints, fumbslost, totalfumbs, rushyds) %>% dplyr::filter(name == "S.Bradford" |  name == "M.Sanchez")
+names(qb)[1] <- "Name"
+names(qb)[2] <- "Passing Attempts"
+names(qb)[3] <- "Passing Yards"
+names(qb)[4] <- "Touchdown Passes"
+names(qb)[5] <- "Interceptions"
+names(qb)[6] <- "Fumbles Lost"
+names(qb)[7] <- "Total Fumbles"
+names(qb)[8] <- "Rushing Yards"
+qb.melt <- melt(qb, id.vars = "Name")
+
+(qb.plot <- hc_params %>%
+  hc_add_series(name="Bradford", data = subset(qb.melt$value, qb.melt$Name == "S.Bradford"), type = plot.type, colorByPoint = T)  %>%
+  hc_xAxis(categories = qb.melt$variable) %>%
+  hc_title(text = "Sam Bradford", align = alignment))
+
+pass.att <- phl %>% dplyr::filter(pass.att > 0) %>% group_by(name) %>% summarise(Passing.Attempts = sum(pass.att)) %>% ungroup() %>% arrange(desc(Passing.Attempts))
+pass.att$rank <- c(1:nrow(pass.att))
+
+(pass.att.plot <- hc_params %>%
+  hc_add_series(name=qb$name, data = subset(pass.att$Passing.Attempts, pass.att$rank <= top.n), type = plot.type)  %>%
+  hc_xAxis(categories = pass.att$name) %>%
+  hc_title(text = "Passing Attempts", align = alignment))
+
+#passing yards
+pass.yds <- phl %>% dplyr::filter(passyds > 0) %>% group_by(name) %>% summarise(Passing.Yards = sum(passyds)) %>% ungroup() %>% arrange(desc(Passing.Yards))
+pass.yds$rank <- c(1:nrow(pass.yds))
+
+(pass.yds.plot <- hc_params %>%
+  hc_add_series(name="Passing Yards", data = subset(pass.yds$Passing.Yards, pass.yds$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = pass.yds$name) %>%
+  hc_title(text = "Passing Yards", align = alignment))
+
+#Passing Touchdowns
+pass.tds <- phl %>% dplyr::filter(pass.tds > 0) %>% group_by(name) %>% summarise(Passing.tds = sum(pass.tds)) %>% ungroup() %>% arrange(desc(Passing.tds))
+pass.tds$rank <- c(1:nrow(pass.tds))
+
+(pass.tds.plot <- hc_params %>%
+  hc_add_series(name="Passing Touchdowns", data = subset(pass.tds$Passing.tds, pass.tds$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = pass.tds$name) %>%
+  hc_title(text = "Passing Touchdowns", align= alignment))
+
+#Interceptions thrown
+pass.int <- phl %>% dplyr::filter(pass.ints > 0) %>% group_by(team,name,team2) %>% summarise(Passing.int = sum(pass.ints)) %>% ungroup() %>% arrange(desc(Passing.int))
+pass.int$rank <- c(1:nrow(pass.int))
+
+(pass.int.plot <- hc_params%>%
+  hc_add_series(name="Interceptions Thrown", data = subset(pass.int$Passing.int, pass.int$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = pass.int$name) %>%
+  hc_title(text=paste("Interceptions - Top",top.n, sep=" "), align= alignment))
+
+#receptions
+recept <- phl %>% dplyr::filter(recept > 0) %>% group_by(team,name,team2) %>% summarise(recept = sum(recept)) %>% ungroup() %>% arrange(desc(recept))
+recept$rank <- c(1:nrow(recept))
+
+(recept.plot <- hc_params %>%
+  hc_add_series(name="Receptions", data = subset(recept$recept, recept$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = recept$name) %>%
+  hc_title(text=paste("Receptions - Top",top.n, sep=" "), align= alignment))
+
+#reception yards
+rec.yds <- phl %>% dplyr::filter(recyds > 0) %>% group_by(team,name,team2) %>% summarise(rec.yds = sum(recyds)) %>% ungroup() %>% arrange(desc(rec.yds))
+rec.yds$rank <- c(1:nrow(rec.yds))
+
+(rec.yds.plot <- hc_params %>%
+  hc_add_series(name="Reception Yards", data = subset(rec.yds$rec.yds, rec.yds$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = rec.yds$name) %>%
+  hc_title(text=paste("Reception Yards - Top",top.n, sep=" "), align= alignment))
+
+#longest reception
+reclng <- phl %>% dplyr::filter(reclng > 0) %>% group_by(team,name,team2) %>% summarise(reclng = sum(reclng)) %>% ungroup() %>% arrange(desc(reclng))
+reclng$rank <- c(1:nrow(reclng))
+
+(reclng.plot <- hc_params %>%
+  hc_add_series(name="Longest Reception", data = subset(reclng$reclng, reclng$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = reclng$name) %>%
+  hc_title(text=paste("Longest Reception - Top",top.n, sep=" "), align= alignment))
+
+#reception tds
+rec.tds <- phl %>% dplyr::filter(rec.tds > 0) %>% group_by(team,name,team2) %>% summarise(rec.tds = sum(rec.tds)) %>% ungroup() %>% arrange(desc(rec.tds))
+rec.tds$rank <- c(1:nrow(rec.tds))
+
+(rec.tds.plot <- hc_params %>%
+  hc_add_series(name="Reception TDs", data = subset(rec.tds$rec.tds, rec.tds$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = rec.tds$name) %>%
+  hc_title(text=paste("Reception Touchdowns - Top",top.n, sep=" "), align= alignment))
+
+#fumbles
+fumbs <- phl %>% dplyr::filter(totalfumbs > 0) %>% group_by(team,name,team2) %>% summarise(fumbs= sum(totalfumbs)) %>% ungroup() %>% arrange(desc(fumbs))
+fumbs$rank <- c(1:nrow(fumbs))
+
+(fumbs.plot <- hc_params %>%
+  hc_add_series(name="Fumbles", data = subset(fumbs$fumbs, fumbs$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = fumbs$name) %>%
+  hc_title(text=paste("Fumbles - Top",top.n, sep=" "), align= alignment))
+
+#fumbles lost
+fumbs.lost <- phl %>% dplyr::filter(fumbslost > 0) %>% group_by(team,name,team2) %>% summarise(fumbs.lost = sum(fumbslost)) %>% ungroup() %>% arrange(desc(fumbs.lost))
+fumbs.lost$rank <- c(1:nrow(fumbs.lost))
+
+(fumbs.lost.plot <- hc_params %>%
+  hc_add_series(name="Lost Fumbles", data = subset(fumbs.lost$fumbs.lost, fumbs.lost$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = fumbs.lost$name) %>%
+  hc_title(text=paste("Lost Fumbles - Top",top.n, sep=" "), align= alignment))
+
+#Rushing Attempts
+rush.att <- phl %>% dplyr::filter(rush.att > 0) %>% group_by(team,name,team2) %>% summarise(rush.att = sum(rush.att)) %>% ungroup() %>% arrange(desc(rush.att))
+rush.att$rank <- c(1:nrow(rush.att))
+
+(rush.att.plot <- hc_params %>%
+  hc_add_series(name="Rushing Attempts", data = subset(rush.att$rush.att, rush.att$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = rush.att$name) %>%
+  hc_title(text=paste("Rushing Attempts - Top",top.n, sep=" "), align= alignment))
+
+#Rushing Yards
+rush.yds <- phl %>% dplyr::filter(rushyds > 0) %>% group_by(team,name,team2) %>% summarise(rush.yds = sum(rushyds)) %>% ungroup() %>% arrange(desc(rush.yds))
+rush.yds$rank <- c(1:nrow(rush.yds))
+
+(rush.yds.plot <- hc_params %>%
+  hc_add_series(name="Rushing Yards", data = subset(rush.yds$rush.yds, rush.yds$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = rush.yds$name) %>%
+  hc_title(text=paste("Rushing Yards - Top",top.n, sep=" "), align= alignment))
+
+#Rushing Yards / Att
+rush.yds.att <- phl %>% select(rushyds, rush.att, team, name, team2) %>% dplyr::filter(rush.att > (4*16)) %>% group_by(team,name,team2) %>% summarise(rush.yds.att = (rushyds/rush.att)) %>% ungroup() %>% arrange(desc(rush.yds.att))
+rush.yds.att$rank <- c(1:nrow(rush.yds.att))
+rush.yds.att$rush.yds.att <- round(rush.yds.att$rush.yds.att, 2)
+
+(rush.yds.att.plot <- hc_params %>%
+  hc_add_series(name="Rushing Yards/Attempt", data = subset(rush.yds.att$rush.yds.att, rush.yds$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = rush.yds.att$name) %>%
+  hc_title(text=paste("Rushing Yards / Attempt - Top",top.n, sep=" "), align= alignment) %>%
+  hc_subtitle(text="For players with at least 4 carriers per game, 2015 Season (Click & Drag to Zoom)", align=alignment))
+
+#Rushing TDs
+rush.tds <- phl %>% dplyr::filter(rushtds > 0) %>% group_by(team,name,team2) %>% summarise(rush.tds = sum(rushtds)) %>% ungroup() %>% arrange(desc(rush.tds))
+rush.tds$rank <- c(1:nrow(rush.tds))
+
+(rush.tds.att.plot <- hc_params %>%
+  hc_add_series(name="Rushing Touchdowns", data = subset(rush.tds$rush.tds, rush.tds$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = rush.tds$name) %>%
+  hc_title(text=paste("Rushing Touchdowns - Top",top.n, sep=" "), align= alignment))
+
+
+
+
 # defense ----
 # special teams ----
 # time series ----
