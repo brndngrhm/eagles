@@ -25,7 +25,8 @@ eagles.hist <- read.csv("~/R Working Directory/Other/eagles/eagles.hist.csv")
 
 Some ideas for gathering and presenting NFL stats for the upcoming season.  
 Code available on github [here.](https://github.com/brndngrhm/eagles)  
-Mainly uses *nflscrapR* package. More details on that [here.](https://github.com/maksimhorowitz/nflscrapR)
+Data obtained using the *nflscrapR* package. More details on that [here.](https://github.com/maksimhorowitz/nflscrapR)  
+Plots done using the *Highcharter* package.  More details on that [here.](http://jkunst.com/highcharter/)
 
 # NFL {.tabset}
 
@@ -429,6 +430,8 @@ xp.missed$rank <- c(1:nrow(xp.missed))
 
 
 
+
+
 ## Team Stats {.tabset}
 ### Offense {.tabset}
 #### Passing Attempts
@@ -776,12 +779,13 @@ xp.missed$rank <- c(1:nrow(xp.missed))
 
 
 
+
+
 # Eagles {.tabset}
 ## Players Stats {.tabset}
 ### Offense {.tabset}
 ### Defense {.tabset}
 ### Special Teams {.tabset}
-
 ##Time Series Stuff {.tabset}
 ### Passing Attempts Since 2009
 ```{r, echo = F}
