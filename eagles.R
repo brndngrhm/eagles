@@ -1,7 +1,8 @@
 # 2015 NFL & Eagles Team and Player stats
 # Run "packages" code chunk then start at line 42 to replicate plots
-# *!*!*! NEED TO FIGURE OUT HOW TO SHOW ALL NAMES/TEAMS ON AXIS & ADD TEAM + RANK TO TOOLTIP *!*!*!
-# want to add qb rating, time of possession, offensive plays, offensive/defensive time on field, points scored, 
+# *!*!*! NEED TO FIGURE OUT HOW TO MANUALL DEFINE PLOT SIZE & ADD TEAM + RANK TO TOOLTIP *!*!*!
+# want to add qb rating, time of possession, offensive plays, offensive/defensive time on field, points scored
+#great highcharter reference: http://rpackages.ianhowson.com/cran/highcharter/
 
 # packages ----
 library(dplyr)
