@@ -67,6 +67,14 @@ top.n <- 40          #how many names to show on axis
 plot.type <- "bar"   #type of plot
 alignment <- "left"  #subtitle alignment
 
+#other themes to try
+#hc_add_theme(hc_theme_gridlight())
+#hc_add_theme(hc_theme_flat())
+#hc_add_theme(hc_theme_db())
+#hc_add_theme(hc_theme_flat())
+#hc_add_theme(hc_theme_flatdark())
+#hc_add_theme(hc_theme_sandsignika())
+
 # NFL LEVEL ----
 # PLAYERS 
 # offense ----
