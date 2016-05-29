@@ -708,3 +708,5 @@ highchart(type = "stock") %>%
              href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
   hc_add_theme(hc_theme_gridlight()) %>%
   hc_legend(enabled = T)
+
+#score
