@@ -897,38 +897,38 @@ phl.xp.missed$rank <- c(1:nrow(phl.xp.missed))
 
 
 ## Time Series Stuff {.tabset}
-### Passing Attempts Since 2009
+### Avg. Completion Rate Since 2009
 ```{r, echo = F}
-hist.pass.att <- eagles.hist %>% filter(pass.att > 0) %>% group_by(date, name) %>% summarise(total  = sum(pass.att))
-hist.pass.att$date <- ymd(hist.pass.att$date)
+#historical avg completion rate
+hist.pass.comp.rate <- eagles.hist %>% select(date, name, pass.att, pass.comp) %>% dplyr::filter(pass.att > 5) %>% group_by(date, name) %>% summarise(total  = (pass.comp/pass.att))
+hist.pass.comp.rate$date <- ymd(hist.pass.comp.rate$date)
 
-bradford.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "S.Bradford"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "S.Bradford"), frequency = 52)
-vick.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "M.Vick"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "M.Vick"), frequency = 52)
-foles.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "N.Foles"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "N.Foles"), frequency = 52)
-sanchez.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "M.Sanchez"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "M.Sanchez"), frequency = 52)
-barkley.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "M.Barkley"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "M.Barkley"), frequency = 52)
-smith.ts <- xts(subset(hist.pass.att$total, hist.pass.att$name == "B.Smith"), order.by = subset(hist.pass.att$date, hist.pass.att$name == "B.Smith"), frequency = 52)
+bradford.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "S.Bradford"), order.by = subset(hist.pass.comp.rate$date, hist.pass.comp.rate$name == "S.Bradford"), frequency = 52)
+vick.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "M.Vick"), order.by = subset(hist.pass.comp.rate$date, hist.pass.comp.rate$name == "M.Vick"), frequency = 52)
+foles.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "N.Foles"), order.by = subset(hist.pass.comp.rate$date, hist.pass.comp.rate$name == "N.Foles"), frequency = 52)
+sanchez.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "M.Sanchez"), order.by = subset(hist.pass.comp.rate$date, hist.pass.comp.rate$name == "M.Sanchez"), frequency = 52)
+barkley.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "M.Barkley"), order.by = subset(hist.pass.comp.rate$date, hist.pass.comp.rate$name == "M.Barkley"), frequency = 52)
+mcnabb.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "D.McNabb"), order.by = subset(hist.pass.comp.rate$date, hist.pass.comp.rate$name == "D.McNabb"), frequency = 52)
+kolb.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "K.Kolb"), order.by = subset(hist.pass.comp.rate$date, hist.pass.comp.rate$name == "K.Kolb"), frequency = 52)
+young.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "V.Young"), order.by = subset(hist.pass.comp.rate$date, hist.pass.comp.rate$name == "V.Young"), frequency = 52)
+kafka.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "M.Kafka"), order.by = subset(hist.pass.comp.rate$date, hist.pass.comp.rate$name == "M.Kafka"), frequency = 52)
 
-highchart(type = "chart") %>% 
+(hist.comp.rate.plot <- hc_params %>%
+  highchart(type = "chart") %>% 
+  hc_add_series_xts(mcnabb.ts, id = "McNabb", name = "McNabb") %>%
+  hc_add_series_xts(kolb.ts, id = "Kolb", name = "Kolb") %>%
   hc_add_series_xts(vick.ts, id = "Vick", name= "Vick") %>%
+  hc_add_series_xts(kafka.ts, id = "Kafka", name = "Kafka") %>%
+  hc_add_series_xts(young.ts, id = "Young", name = "Young") %>%
   hc_add_series_xts(foles.ts, id = "Foles", name = "Foles") %>%
   hc_add_series_xts(barkley.ts, id = "Barkley", name = "Barkley") %>% 
-  hc_add_series_xts(smith.ts, id = "Smith", name = "Smith")%>%
   hc_add_series_xts(sanchez.ts, id = "Sanchez", name = "Sanchez") %>%
   hc_add_series_xts(bradford.ts, id = "Bradford", name = "Bradford") %>%
-  hc_rangeSelector(inputEnabled = T) %>% 
-  hc_scrollbar(enabled = FALSE) %>%
-  hc_add_theme(hc_theme_gridlight()) %>% 
-  hc_tooltip(crosshairs = TRUE, shared = TRUE, borderWidth = 1, shared=T)%>%
-  hc_title(text="Historical Passing Attempts", align="left") %>%
+  hc_title(text=paste("Historical Avg. Completion Rate:", format(mean(hist.pass.comp.rate$total),digits=2), by=" "), align="left") %>%
   hc_subtitle(text="2009-2015", align="left") %>%
-  hc_yAxis(title=" ") %>%
-  hc_exporting(enabled = TRUE) %>%
-  hc_credits(enabled = TRUE,
-             text = "nflscrapR",
-             href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
-  hc_add_theme(hc_theme_gridlight()) %>%
-  hc_legend(enabled = T)
+  hc_legend(enabled = T)%>%
+  hc_rangeSelector(inputEnabled = F) %>% 
+  hc_scrollbar(enabled = FALSE))
 
 ```
 
