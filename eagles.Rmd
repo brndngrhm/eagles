@@ -373,3 +373,23 @@ kafka.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "M
 
 ```
 
+### Running vs Passing Since 2009
+```{r, echo=F}
+#rushing vs passing
+rush.pass <- eagles.hist %>% select(date, rush.att, pass.att) %>% group_by(date) %>% summarise_each(funs(sum))
+rush.pass$date <- ymd(hist.pass.comp.rate$date)
+
+rush.ts <- xts(rush.pass$rush.att, order.by = rush.pass$date, frequency = 52)
+pass.ts <- xts(rush.pass$pass.att, order.by = rush.pass$date, frequency = 52)
+
+(hist.comp.rate.plot <- hc_params %>%
+  highchart(type = "chart") %>% 
+  hc_add_series_xts(rush.ts, id = "Rush", name = "Rushing Plays") %>%
+  hc_add_series_xts(pass.ts, id = "Pass", name = "Passing Plays") %>%
+  hc_title(text="Rushing vs Passing Plays", align="left") %>%
+  hc_subtitle(text="2009-2015", align="left") %>%
+  hc_legend(enabled = T)%>%
+  hc_rangeSelector(inputEnabled = F) %>% 
+  hc_scrollbar(enabled = FALSE))
+```
+
