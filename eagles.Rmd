@@ -104,7 +104,7 @@ recept.phl$rank <- c(1:nrow(recept.phl))
 (recept.phl.plot <- hc_params %>%
   hc_add_series(name="Receptions", data = subset(recept.phl$recept, recept.phl$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = recept.phl$name) %>%
-  hc_title(text="Receptions", align= alignment))
+  hc_title(text=paste("Receptions:", sum(recept.phl$recept), by = " "), align= alignment))
 
 ```
 
@@ -117,7 +117,7 @@ phl.rec.yds$rank <- c(1:nrow(phl.rec.yds))
 (phl.rec.yds.plot <- hc_params %>%
   hc_add_series(name="Recieving Yards", data = subset(phl.rec.yds$rec.yds, phl.rec.yds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.rec.yds$name) %>%
-  hc_title(text="Recieving Yards", align= alignment))
+  hc_title(text=paste("Recieving Yards:", sum(phl.rec.yds$rec.yds), by = " "), align= alignment))
 ```
 
 ### Yds per Catch
@@ -134,7 +134,7 @@ phl.rec.yds.att$yds.att <- round(phl.rec.yds.att$yds.att, 2)
 (phl.rec.yds.att.plot <- hc_params %>%
   hc_add_series(name="Yards per Catch", data = subset(phl.rec.yds.att$yds.att, phl.rec.yds.att$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.rec.yds.att$name) %>%
-  hc_title(text="Yards per Catch", align= alignment))
+  hc_title(text=paste("Avg. Yards Per Catch:", format(mean(phl.rec.yds.att$yds.att), digits=4), by = " "), align= alignment))
 ```
 
 ### Longest Reception
@@ -146,7 +146,7 @@ phl.reclng$rank <- c(1:nrow(phl.reclng))
 (reclng.plot <- hc_params %>%
   hc_add_series(name="Longest Reception", data = subset(phl.reclng$reclng, phl.reclng$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.reclng$name) %>%
-  hc_title(text="Longest Reception", align= alignment))
+  hc_title(text=paste("Longest Reception:", max(phl.reclng$reclng), "Yards", by = " "), align= alignment))
 ```
 
 ### Recieving TDs
@@ -158,7 +158,7 @@ phl.rec.tds$rank <- c(1:nrow(phl.rec.tds))
 (rec.tds.plot <- hc_params %>%
   hc_add_series(name="Recieving Touchdowns", data = subset(phl.rec.tds$rec.tds, phl.rec.tds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.rec.tds$name) %>%
-  hc_title(text="Recieving Touchdowns", align= alignment))
+  hc_title(text=paste("Recieving Touchdowns:", sum(phl.rec.tds$rec.tds), by = " "),align= alignment))
 ```
 
 ### Fumbles
@@ -170,7 +170,7 @@ phl.fumbs$rank <- c(1:nrow(phl.fumbs))
 (fumbs.plot <- hc_params %>%
   hc_add_series(name="Fumbles", data = subset(phl.fumbs$fumbs, phl.fumbs$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.fumbs$name) %>%
-  hc_title(text="Fumbles", align= alignment))
+  hc_title(text=paste("Fumbles:", sum(phl.fumbs$fumbs), by = " "), align= alignment))
 ```
 
 ### Lost Fumbles
@@ -182,7 +182,7 @@ phl.fumbs.lost$rank <- c(1:nrow(phl.fumbs.lost))
 (fumbs.lost.plot <- hc_params %>%
   hc_add_series(name="Lost Fumbles", data = subset(phl.fumbs.lost$fumbs.lost, phl.fumbs.lost$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.fumbs.lost$name) %>%
-  hc_title(text="Lost Fumbles", align= alignment))
+  hc_title(text=paste("Lost Fumbles:", sum(phl.fumbs.lost$fumbs.lost), by = " "), align= alignment))
 ```
 
 ### Rushing Attempts
@@ -194,7 +194,7 @@ phl.rush.att$rank <- c(1:nrow(phl.rush.att))
 (rush.att.plot <- hc_params %>%
   hc_add_series(name="Rushing Attempts", data = subset(phl.rush.att$rush.att, phl.rush.att$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.rush.att$name) %>%
-  hc_title(text="Rushing Attmepts", align= alignment))
+  hc_title(text=paste("Rushing Attempts:", sum(phl.rush.att$rush.att), by = " "),align= alignment))
 ```
 
 ### Rushing Yards
@@ -206,7 +206,7 @@ phl.rush.yds$rank <- c(1:nrow(phl.rush.yds))
 (rush.yds.plot <- hc_params %>%
   hc_add_series(name="Rushing Yards", data = subset(phl.rush.yds$rush.yds, phl.rush.yds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.rush.yds$name) %>%
-  hc_title(text="Rushing Yards", align= alignment))
+  hc_title(text=paste("Rushing Yards:", sum(phl.rush.yds$rush.yds), by = " "), align= alignment))
 ```
 
 ### Rushing Yds Per Carry
@@ -223,7 +223,7 @@ phl.rush.yds.att$yds.att <- round(phl.rush.yds.att$yds.att, 2)
 (phl.rush.yds.att.plot <- hc_params %>%
   hc_add_series(name="Yards per Carry", data = subset(phl.rush.yds.att$yds.att, phl.rush.yds.att$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.rush.yds.att$name) %>%
-  hc_title(text="Yards per Carry", align= alignment))
+  hc_title(text=paste("Avg Yards Per Carry:", format(mean(phl.rush.yds.att$yds.att),digits=3), by = " "), align= alignment))
 ```
 
 ### Rushing TDs
@@ -235,7 +235,7 @@ phl.rush.tds$rank <- c(1:nrow(phl.rush.tds))
 (rush.tds.att.plot <- hc_params %>%
   hc_add_series(name="Rushing Touchdowns", data = subset(phl.rush.tds$rush.tds, phl.rush.tds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.rush.tds$name) %>%
-  hc_title(text="Rushing Touchdowns", align= alignment))
+  hc_title(text=paste("Rushing Touchdowns:", sum(phl.rush.tds$rush.tds), by = " "),align= alignment))
 ```
 
 ## Defense {.tabset}
@@ -248,7 +248,7 @@ phl.sacks$rank <- c(1:nrow(phl.sacks))
 (sacks.plot <- hc_params %>%
   hc_add_series(name="Sacks", data = subset(phl.sacks$sacks, phl.sacks$rank <= top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.sacks$name)  %>%
-  hc_title(text="Sacks", align= alignment))
+  hc_title(text=paste("Sacks:", sum(phl.sacks$sacks), by = " "), align= alignment))
 ```
 
 ### Tackles
@@ -260,7 +260,7 @@ phl.tackles$rank <- c(1:nrow(phl.tackles))
 (tackles.plot <- hc_params %>%
   hc_add_series(name="Tackles", data = subset(phl.tackles$tackles, phl.tackles$rank <= top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.tackles$name)  %>%
-  hc_title(text="Tackles", align= alignment))
+  hc_title(text=paste("Tackles:", sum(phl.tackles$tackles), by = " "), align= alignment))
 ```
 
 ### Assisted Tackles
@@ -272,7 +272,7 @@ phl.asst.tackles$rank <- c(1:nrow(phl.asst.tackles))
 (asst.tackles.plot <- hc_params %>%
   hc_add_series(name="Assisted Tackles", data = subset(phl.asst.tackles$asst.tackles, phl.asst.tackles$rank <= top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.asst.tackles$name) %>%
-  hc_title(text="Assisted Tackles", align= alignment))
+  hc_title(text=paste("Assisted Tackles:", sum(phl.asst.tackles$asst.tackles), by = " "), align= alignment))
 ```
 
 ### Forced Fubmles
@@ -284,7 +284,7 @@ phl.forced.fumbs$rank <- c(1:nrow(phl.forced.fumbs))
 (tackles.plot <- hc_params %>%
   hc_add_series(name="Forced Fumbles", data = subset(phl.forced.fumbs$forced.fumbs, phl.forced.fumbs$rank <= top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.forced.fumbs$name) %>%
-  hc_title(text="Forced Fumbles", align= alignment))
+  hc_title(text=paste("Forced Fumbles:", sum(phl.forced.fumbs$forced.fumbs), by = " "), align= alignment))
 ```
 
 ### Defensive Ints
@@ -296,7 +296,7 @@ phl.defints$rank <- c(1:nrow(phl.defints))
 (def.ints.plot <- hc_params %>%
   hc_add_series(name="Defensive Interceptions", data = subset(phl.defints$defints, phl.defints$rank <= top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.defints$name) %>%
-  hc_title(text="Defensive Interceptions", align= alignment))
+  hc_title(text=paste("Defensive Interceptions:", sum(phl.defints$defints), by = " "), align= alignment))
 ```
 
 ## Special Teams {.tabset}
@@ -309,7 +309,7 @@ phl.fg$rank <- c(1:nrow(phl.fg))
 (phl.fg.plot <- hc_params %>%
   hc_add_series(name="Field Goal Percentage", data = subset(phl.fg$fg, phl.fg$rank <= top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.fg$name)  %>%
-  hc_title(text="Field Goal Percentage", align= alignment))
+  hc_title(text=paste("Avg Field Goal Percentage:", format(mean(phl.fg$fg),digits=3), by = " "), align= alignment))
 ```
 
 ### Field Goal Pts
@@ -321,7 +321,7 @@ phl.fg.points$rank <- c(1:nrow(phl.fg.points))
 (fg.points.plot <- hc_params %>%
   hc_add_series(name="Field Goal Points", data = subset(phl.fg.points$fg.points, phl.fg.points$rank <= top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.fg.points$name) %>%
-  hc_title(text="Field Goal Points", align= alignment))
+  hc_title(text=paste("Field Goal Points:", sum(phl.fg.points$fg.points), by = " "), align= alignment))
 ```
 
 ### Missed Extra Points
@@ -333,7 +333,7 @@ phl.xp.missed$rank <- c(1:nrow(phl.xp.missed))
 (phl.xp.missed.plot <- hc_params %>%
   hc_add_series(name="Missed Extra Points", data = subset(phl.xp.missed$xp.missed, phl.xp.missed$rank <= top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.xp.missed$name)  %>%
-  hc_title(text="Missed Extra Points", align= alignment))
+  hc_title(text=paste("Missed Extra Points:", sum(phl.xp.missed$xp.missed), by = " "), align= alignment))
 ```
 
 
