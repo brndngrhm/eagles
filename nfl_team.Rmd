@@ -1,7 +1,5 @@
 ---
 title: "NFL Team"
-author: "Brendan Graham"
-date: "May 28, 2016"
 output: html_document
 ---
 
