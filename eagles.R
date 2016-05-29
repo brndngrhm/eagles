@@ -597,6 +597,7 @@ phl.rush.tds$rank <- c(1:nrow(phl.rush.tds))
   hc_xAxis(categories = phl.rush.tds$name) %>%
   hc_title(text="Rushing Touchdowns", align= alignment))
 # defense ----
+#sacks
 phl.sacks <- phl %>% dplyr::filter(sacks > 0) %>% group_by(name) %>% summarise(sacks = sum(sacks)) %>% ungroup() %>% arrange(desc(sacks))
 phl.sacks$rank <- c(1:nrow(phl.sacks))
 
@@ -641,6 +642,7 @@ phl.defints$rank <- c(1:nrow(phl.defints))
   hc_xAxis(categories = phl.defints$name) %>%
   hc_title(text="Defensive Interceptions", align= alignment))
 # special teams ----
+# Field Goal %
 phl.fg <- phl %>% dplyr::filter(fga > 0) %>% select(name, fga, fgm) %>% group_by(name) %>% summarise(fg = (fgm/fga)) %>% ungroup() %>% arrange(desc(fg))
 phl.fg$rank <- c(1:nrow(phl.fg))
 
@@ -663,7 +665,7 @@ phl.xp.missed <- phl %>% dplyr::filter(xpmissed > 0) %>% group_by(name) %>% summ
 phl.xp.missed$rank <- c(1:nrow(phl.xp.missed))
 
 (phl.xp.missed.plot <- hc_params %>%
-  hc_add_series(name="Missed Extra Points", data = subset(phl.xp.missed$xp.missed, phl.xp.missed$rank <= top.n), type = plot.type)  %>%
+  hc_add_series(name="Missed Extra Points", data = phl.xp.missed$xp.missed, type = plot.type)  %>%
   hc_xAxis(categories = phl.xp.missed$name)  %>%
   hc_title(text="Missed Extra Points", align= alignment))
 
