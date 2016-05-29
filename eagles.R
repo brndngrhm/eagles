@@ -660,7 +660,7 @@ phl.fg.points$rank <- c(1:nrow(phl.fg.points))
   hc_xAxis(categories = phl.fg.points$name) %>%
   hc_title(text="Field Goal Points", align= alignment))
 
-#extra points missed
+#extra points missed - DOESNT WORK FOR SOME REASON
 phl.xp.missed <- phl %>% dplyr::filter(xpmissed > 0) %>% group_by(name) %>% summarise(xp.missed = sum(xpmissed)) %>% ungroup() %>% arrange(desc(xp.missed))
 phl.xp.missed$rank <- c(1:nrow(phl.xp.missed))
 
@@ -668,7 +668,6 @@ phl.xp.missed$rank <- c(1:nrow(phl.xp.missed))
   hc_add_series(name="Missed Extra Points", data = phl.xp.missed$xp.missed, type = plot.type)  %>%
   hc_xAxis(categories = phl.xp.missed$name)  %>%
   hc_title(text="Missed Extra Points", align= alignment))
-
 # time series ----
 #historical attempted passes
 hist.pass.att <- eagles.hist %>% dplyr::filter(pass.att > 1) %>% group_by(date, name) %>% summarise(total  = sum(pass.att))
@@ -709,4 +708,3 @@ highchart(type = "stock") %>%
              href = "https://github.com/maksimhorowitz/nflscrapR") %>% 
   hc_add_theme(hc_theme_gridlight()) %>%
   hc_legend(enabled = T)
-
