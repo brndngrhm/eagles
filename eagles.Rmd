@@ -93,8 +93,6 @@ knitr::kable(qb, col.names = c("", "Passing Attempts", "Passing Yds", "TD Passes
 
 ```
 
-
-
 ### Receptions
 ```{r, echo = F, fig.height=20, fig.width=10}
 #receptions
@@ -118,6 +116,33 @@ phl.rec.yds$rank <- c(1:nrow(phl.rec.yds))
   hc_add_series(name="Recieving Yards", data = subset(phl.rec.yds$rec.yds, phl.rec.yds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = phl.rec.yds$name) %>%
   hc_title(text=paste("Recieving Yards:", sum(phl.rec.yds$rec.yds), by = " "), align= alignment))
+```
+
+### Targets
+```{r, echo=F}
+#targets
+targets <- drops.hist %>% dplyr::filter(year == "2015" & team == "PHI") %>% arrange(desc(targets))
+targets$rank <- c(1:nrow(targets))
+
+(targets.plot <- hc_params %>%
+  hc_add_series(name="Targets", data = subset(targets$targets, targets$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = targets$player) %>%
+  hc_title(text=paste("Targets - Top",top.n, sep=" "), align= alignment))
+
+```
+
+### Reception Rate
+```{r, echo=F}
+#reception rate
+comp.rate <- drops.hist %>% dplyr::filter(year == "2015" & receptions > 5 & team == "PHI") %>% arrange(desc(comp.rate))
+comp.rate$rank <- c(1:nrow(comp.rate))
+
+(comp.rate.plot <- hc_params %>%
+  hc_add_series(name="Completion Rate", data = subset(comp.rate$comp.rate, comp.rate$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = comp.rate$player) %>%
+  hc_title(text=paste("Completion Rate - Top",top.n, sep=" "), align= alignment) %>%
+  hc_subtitle(text = "2015 Season, Players with more than 5 catches. (Click & Drag to Zoom"))
+
 ```
 
 ### Yds per Catch
@@ -160,6 +185,33 @@ phl.rec.tds$rank <- c(1:nrow(phl.rec.tds))
   hc_xAxis(categories = phl.rec.tds$name) %>%
   hc_title(text=paste("Recieving Touchdowns:", sum(phl.rec.tds$rec.tds), by = " "),align= alignment))
 ```
+
+### Drops
+```{r, echo=F}
+#drops
+drops <- drops.hist %>% dplyr::filter(year == "2015" & team == "PHI")
+
+(drops.plot <- hc_params %>%
+  hc_add_series(name="Drops", data = drops$drops, type = plot.type)  %>%
+  hc_xAxis(categories = drops$player) %>%
+  hc_title(text=paste("Drops- Top",top.n, sep=" "), align= alignment))
+
+```
+
+### Drop Rate
+```{r, echo=F}
+#drop rate
+drop.rate <- drops.hist %>% dplyr::filter(year == "2015" & receptions > 5 & team == "PHI") %>% arrange(desc(drop.rate))
+drop.rate$rank <- c(1:nrow(drop.rate))
+
+(drop.rate.plot <- hc_params %>%
+  hc_add_series(name="Drop Rate", data = subset(drop.rate$drop.rate, drop.rate$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = drop.rate$player) %>%
+  hc_title(text=paste("Drop Rate - Top",top.n, sep=" "), align= alignment) %>%
+  hc_subtitle(text = "2015 Season, Players with more than 5 catches. (Click & Drag to Zoom"))
+
+```
+
 
 ### Fumbles
 ```{r, echo=F, fig.height=20, fig.width=10}
