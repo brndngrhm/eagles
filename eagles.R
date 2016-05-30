@@ -869,7 +869,7 @@ kafka.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "M
 
 #rushing vs passing
 rush.pass <- eagles.hist %>% select(date, rush.att, pass.att) %>% group_by(date) %>% summarise_each(funs(sum))
-rush.pass$date <- ymd(hist.pass.comp.rate$date)
+rush.pass$date <- ymd(rush.pass$date)
 
 rush.ts <- xts(rush.pass$rush.att, order.by = rush.pass$date, frequency = 52)
 pass.ts <- xts(rush.pass$pass.att, order.by = rush.pass$date, frequency = 52)
