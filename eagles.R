@@ -726,3 +726,65 @@ pass.ts <- xts(rush.pass$pass.att, order.by = rush.pass$date, frequency = 52)
   hc_rangeSelector(inputEnabled = F) %>% 
   hc_scrollbar(enabled = FALSE))
 
+#drops
+drops <- eagles.hist %>% select(date, pass.att, pass.comp) %>% dplyr::filter(pass.att > 5)
+drops$drops <- drops$pass.att - drops$pass.comp
+drops$date <- ymd(drops$date)
+
+drops.ts <- xts(drops$drops, order.by = drops$date, frequency = 52)
+
+(hist.comp.rate.plot <- hc_params %>%
+  highchart(type = "chart") %>% 
+  hc_add_series_xts(drops.ts, id = "Drops", name = "Dropped Passes") %>%
+  hc_title(text=paste("Average Dropped Passes Per Game:", format(mean(drops$drops), digits=2), by=" "), align="left") %>%
+  hc_subtitle(text="2009-2015", align="left") %>%
+  hc_rangeSelector(inputEnabled = F) %>% 
+  hc_scrollbar(enabled = FALSE) %>%
+  hc_yAxis(plotLines = list(
+    list(label = list(text = " "),
+         color = "#FF0000",
+         width = 2,
+         value = mean(drops.ts[107:123,1]))))%>%
+  hc_yAxis(plotBands = list(
+    list(from = min(drops.ts[107:123,1]), to = max(drops.ts[107:123,1]), color = "rgba(100, 0, 0, 0.1)",
+         label = list(text = "")))))
+
+#pass plays
+pass <- eagles.hist %>% select(date, pass.att) %>% group_by(date) %>% summarise(total = sum(pass.att))
+pass$date <- ymd(hist.pass.comp.rate$date)
+pass$year <- year(pass$date) 
+pass[1:16,4] <- c("'09-'10")
+pass[17:32,4] <- c("'10-'11")
+pass[33:48,4] <- c("'11-'12")
+pass[49:64,4] <- c("'12-'13")
+pass[65:80,4] <- c("'12-'13")
+pass[81:96,4] <- c("'13-'14")
+pass[97:112,4] <- c("'14-'15")
+names(pass)[4] <- "season"
+
+phl.passing.plays <- pass %>% group_by(season) %>% summarise(Passing.Attempts = sum(total))
+
+(phl.passing.plays.plot <- hc_params %>%
+  hc_add_series(name="Passing Attempts 2009-2015", data = phl.passing.plays$Passing.Attempts, type = plot.type)  %>%
+  hc_xAxis(categories = phl.passing.plays$season) %>%
+  hc_title(text="Passing Plays by Season", align= alignment))
+
+#drops bar
+drops <- eagles.hist %>% select(date, pass.comp) %>% group_by(date) %>% summarise(total.comp = sum(pass.comp))
+drops$date <- ymd(drops$date)
+drops <- left_join(pass, drops, by="date")
+drops$drops <- drops$total - drops$total.comp
+drops <- drops %>% arrange(date)
+
+phl.drops.hist <- drops%>% group_by(season) %>% summarise(drops = sum(drops))
+
+(phl.passing.plays.plot <- hc_params %>%
+  hc_add_series(name="Drops 2009-2015", data = phl.drops.hist$drops, type = plot.type)  %>%
+  hc_xAxis(categories = phl.drops.hist$season) %>%
+  hc_title(text="Dropped Passes by Season", align= alignment))
+
+
+
+
+
+
