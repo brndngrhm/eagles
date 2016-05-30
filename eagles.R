@@ -40,6 +40,56 @@ names(hist) <- tolower(names(hist))
 eagles.hist <- hist %>% dplyr::filter(team == "PHI")
 write.csv(eagles.hist, file = "~/R Working Directory/Other/eagles/eagles.hist.csv")
 
+#download drops data ----
+#scrape data using rvest package
+url.2015 <- "http://www.sportingcharts.com/nfl/stats/drops/2015/"
+url.2014 <- "http://www.sportingcharts.com/nfl/stats/drops/2014/"
+url.2013 <- "http://www.sportingcharts.com/nfl/stats/drops/2013/"
+url.2012 <- "http://www.sportingcharts.com/nfl/stats/drops/2012/"
+url.2011 <- "http://www.sportingcharts.com/nfl/stats/drops/2011/"
+url.2010 <- "http://www.sportingcharts.com/nfl/stats/drops/2010/"
+url.2009 <- "http://www.sportingcharts.com/nfl/stats/drops/2009/"
+
+drops.2015 <- as.data.frame(url.2015 %>% read_html() %>% html_nodes(xpath = '//*[@id="aaa4c0bdfb984f4d95077ecb5ba0a549"]') %>% html_table())
+drops.2014 <- as.data.frame(url.2014 %>% read_html() %>% html_nodes(xpath = '//*[@id="d93d8e05d9ee489a83713c178d8ea551"]') %>% html_table())
+drops.2013 <- as.data.frame(url.2013 %>% read_html() %>% html_nodes(xpath = '//*[@id="3431732bc3c14094ad4faa37af85dad6"]') %>% html_table())
+drops.2012 <- as.data.frame(url.2012 %>% read_html() %>% html_nodes(xpath = '//*[@id="a5369cfdaf1f41eca07e41b63ba00695"]') %>% html_table())
+drops.2011 <- as.data.frame(url.2011 %>% read_html() %>% html_nodes(xpath = '//*[@id="5c3c864a97cb4cfbb09750f2f65687ec"]') %>% html_table())
+drops.2010 <- as.data.frame(url.2010 %>% read_html() %>% html_nodes(xpath = '//*[@id="73b4a14673454caa8bd97cd3069e5569"]') %>% html_table())
+drops.2009 <- as.data.frame(url.2009 %>% read_html() %>% html_nodes(xpath = '//*[@id="f52931392dbf42ecace2cbb4ad8d3137"]') %>% html_table())
+
+#Formats and combines data
+
+#adds year column to each dataframe
+drops.2015$year <- "2015"
+drops.2014$year <- "2014"
+drops.2013$year <- "2013"
+drops.2012$year <- "2012"
+drops.2011$year <- "2011"
+drops.2010$year <- "2010"
+drops.2009$year <- "2009"
+
+#combines and formats data frames
+drops.hist <- rbind(drops.2009, drops.2010, drops.2011, drops.2012, drops.2013, drops.2014, drops.2015)
+names(drops.hist) <- tolower(names(drops.hist))
+names(drops.hist)[8] <- "comp.rate"
+names(drops.hist)[9] <- "drop.rate"
+drops.hist$flag <- "Other"
+drops.hist$flag[drops.hist$team == "PHI"] <- "PHI"
+drops.hist$player <- as.factor(drops.hist$player)
+drops.hist$pos <- as.factor(drops.hist$pos)
+drops.hist$team <- as.factor(drops.hist$team)
+drops.hist$year <- as.factor(drops.hist$year)
+drops.hist$flag <- as.factor(drops.hist$flag)
+
+#formats comp.rate and drop.rate to get rid of % sign and set as numeric
+drops.hist$comp.rate <- sub('%$', '', drops.hist$comp.rate)
+drops.hist$drop.rate <- sub('%$', '', drops.hist$drop.rate)
+drops.hist$comp.rate <- as.numeric(drops.hist$comp.rate)
+drops.hist$drop.rate <- as.numeric(drops.hist$drop.rate)
+drops.hist$comp.rate <- drops.hist$comp.rate/100
+drops.hist$drop.rate <- drops.hist$drop.rate/100
+
 # load data ----
 season.2015.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/season.2015.csv")
 season.2015 <- as.data.frame(read.csv(text = season.2015.x, strip.white = T))
@@ -123,6 +173,15 @@ pass.int$rank <- c(1:nrow(pass.int))
   hc_xAxis(categories = pass.int$name) %>%
   hc_title(text=paste("Interceptions - Top",top.n, sep=" "), align= alignment))
 
+#targets
+targets <- drops.hist %>% dplyr::filter(year == "2015") %>% arrange(desc(targets))
+targets$rank <- c(1:nrow(targets))
+
+(targets.plot <- hc_params %>%
+  hc_add_series(name="Targets", data = subset(targets$targets, targets$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = targets$player) %>%
+  hc_title(text=paste("Targets - Top",top.n, sep=" "), align= alignment))
+
 #receptions
 recept <- season.2015 %>% dplyr::filter(recept > 0) %>% group_by(team,name,team2) %>% summarise(recept = sum(recept)) %>% ungroup() %>% arrange(desc(recept))
 recept$rank <- c(1:nrow(recept))
@@ -131,6 +190,16 @@ recept$rank <- c(1:nrow(recept))
   hc_add_series(name="Receptions", data = subset(recept$recept, recept$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = recept$name) %>%
   hc_title(text=paste("Receptions - Top",top.n, sep=" "), align= alignment))
+
+#reception rate
+comp.rate <- drops.hist %>% dplyr::filter(year == "2015" & receptions > 5) %>% arrange(desc(comp.rate))
+comp.rate$rank <- c(1:nrow(comp.rate))
+
+(comp.rate.plot <- hc_params %>%
+  hc_add_series(name="Completion Rate", data = subset(comp.rate$comp.rate, comp.rate$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = comp.rate$player) %>%
+  hc_title(text=paste("Completion Rate - Top",top.n, sep=" "), align= alignment) %>%
+  hc_subtitle(text = "2015 Season, Players with more than 5 catches. (Click & Drag to Zoom"))
 
 #reception yards
 rec.yds <- season.2015 %>% dplyr::filter(recyds > 0) %>% group_by(team,name,team2) %>% summarise(rec.yds = sum(recyds)) %>% ungroup() %>% arrange(desc(rec.yds))
@@ -158,6 +227,24 @@ rec.tds$rank <- c(1:nrow(rec.tds))
   hc_add_series(name="Reception TDs", data = subset(rec.tds$rec.tds, rec.tds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = rec.tds$name) %>%
   hc_title(text=paste("Reception Touchdowns - Top",top.n, sep=" "), align= alignment))
+
+#drops
+drops <- drops.hist %>% dplyr::filter(year == "2015")
+
+(drops.plot <- hc_params %>%
+  hc_add_series(name="Drops", data = subset(drops$drops, drops$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = drops$player) %>%
+  hc_title(text=paste("Drops- Top",top.n, sep=" "), align= alignment))
+
+#drop rate
+drop.rate <- drops.hist %>% dplyr::filter(year == "2015" & receptions > 5) %>% arrange(desc(drop.rate))
+drop.rate$rank <- c(1:nrow(drop.rate))
+
+(drop.rate.plot <- hc_params %>%
+  hc_add_series(name="Drop Rate", data = subset(drop.rate$drop.rate, drop.rate$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = drop.rate$player) %>%
+  hc_title(text=paste("Drop Rate - Top",top.n, sep=" "), align= alignment) %>%
+  hc_subtitle(text = "2015 Season, Players with more than 5 catches. (Click & Drag to Zoom"))
 
 #fumbles
 fumbs <- season.2015 %>% dplyr::filter(totalfumbs > 0) %>% group_by(team,name,team2) %>% summarise(fumbs= sum(totalfumbs)) %>% ungroup() %>% arrange(desc(fumbs))
@@ -214,6 +301,7 @@ rush.tds$rank <- c(1:nrow(rush.tds))
   hc_add_series(name="Rushing Touchdowns", data = subset(rush.tds$rush.tds, rush.tds$rank <=top.n), type = plot.type)  %>%
   hc_xAxis(categories = rush.tds$name) %>%
   hc_title(text=paste("Rushing Touchdowns - Top",top.n, sep=" "), align= alignment))
+
 # defense ----
 #sacks
 sacks <- season.2015 %>% dplyr::filter(sacks > 0) %>% group_by(team,name,team2) %>% summarise(sacks = sum(sacks)) %>% ungroup() %>% arrange(desc(sacks))
@@ -725,64 +813,6 @@ pass.ts <- xts(rush.pass$pass.att, order.by = rush.pass$date, frequency = 52)
   hc_legend(enabled = T)%>%
   hc_rangeSelector(inputEnabled = F) %>% 
   hc_scrollbar(enabled = FALSE))
-
-#drops
-drops <- eagles.hist %>% select(date, pass.att, pass.comp) %>% dplyr::filter(pass.att > 5)
-drops$drops <- drops$pass.att - drops$pass.comp
-drops$date <- ymd(drops$date)
-
-drops.ts <- xts(drops$drops, order.by = drops$date, frequency = 52)
-
-(hist.comp.rate.plot <- hc_params %>%
-  highchart(type = "chart") %>% 
-  hc_add_series_xts(drops.ts, id = "Drops", name = "Dropped Passes") %>%
-  hc_title(text=paste("Average Dropped Passes Per Game:", format(mean(drops$drops), digits=2), by=" "), align="left") %>%
-  hc_subtitle(text="2009-2015", align="left") %>%
-  hc_rangeSelector(inputEnabled = F) %>% 
-  hc_scrollbar(enabled = FALSE) %>%
-  hc_yAxis(plotLines = list(
-    list(label = list(text = " "),
-         color = "#FF0000",
-         width = 2,
-         value = mean(drops.ts[107:123,1]))))%>%
-  hc_yAxis(plotBands = list(
-    list(from = min(drops.ts[107:123,1]), to = max(drops.ts[107:123,1]), color = "rgba(100, 0, 0, 0.1)",
-         label = list(text = "")))))
-
-#pass plays
-pass <- eagles.hist %>% select(date, pass.att) %>% group_by(date) %>% summarise(total = sum(pass.att))
-pass$date <- ymd(hist.pass.comp.rate$date)
-pass$year <- year(pass$date) 
-pass[1:16,4] <- c("'09-'10")
-pass[17:32,4] <- c("'10-'11")
-pass[33:48,4] <- c("'11-'12")
-pass[49:64,4] <- c("'12-'13")
-pass[65:80,4] <- c("'12-'13")
-pass[81:96,4] <- c("'13-'14")
-pass[97:112,4] <- c("'14-'15")
-names(pass)[4] <- "season"
-
-phl.passing.plays <- pass %>% group_by(season) %>% summarise(Passing.Attempts = sum(total))
-
-(phl.passing.plays.plot <- hc_params %>%
-  hc_add_series(name="Passing Attempts 2009-2015", data = phl.passing.plays$Passing.Attempts, type = plot.type)  %>%
-  hc_xAxis(categories = phl.passing.plays$season) %>%
-  hc_title(text="Passing Plays by Season", align= alignment))
-
-#drops bar
-drops <- eagles.hist %>% select(date, pass.comp) %>% group_by(date) %>% summarise(total.comp = sum(pass.comp))
-drops$date <- ymd(drops$date)
-drops <- left_join(pass, drops, by="date")
-drops$drops <- drops$total - drops$total.comp
-drops <- drops %>% arrange(date)
-
-phl.drops.hist <- drops%>% group_by(season) %>% summarise(drops = sum(drops))
-
-(phl.passing.plays.plot <- hc_params %>%
-  hc_add_series(name="Drops 2009-2015", data = phl.drops.hist$drops, type = plot.type)  %>%
-  hc_xAxis(categories = phl.drops.hist$season) %>%
-  hc_title(text="Dropped Passes by Season", align= alignment))
-
 
 
 
