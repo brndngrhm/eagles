@@ -130,6 +130,20 @@ recept$rank <- c(1:nrow(recept))
   hc_title(text=paste("Receptions - Top",top.n, sep=" "), align= alignment))
 ```
 
+#### Reception Rate
+```{r, echo=F}
+#reception rate
+comp.rate <- drops.hist %>% dplyr::filter(year == "2015" & receptions > 5) %>% group_by(team) %>% summarise(comp.rate = mean(comp.rate)) %>% ungroup() %>% arrange(desc(comp.rate))
+comp.rate$rank <- c(1:nrow(comp.rate))
+
+(comp.rate.plot <- hc_params %>%
+  hc_add_series(name="Completion Rate", data = subset(comp.rate$comp.rate, comp.rate$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = comp.rate$team) %>%
+  hc_title(text="Completion Rate", align= alignment) %>%
+  hc_subtitle(text = "2015 Season, Players with more than 5 catches. (Click & Drag to Zoom)"))
+```
+
+
 #### Recieving Yards
 ```{r, echo = F}
 #reception yards
@@ -153,6 +167,34 @@ rec.tds$rank <- c(1:nrow(rec.tds))
   hc_xAxis(categories = rec.tds$team)  %>%
   hc_title(text=paste("Recieving Touchdowns - Top",top.n, sep=" "), align= alignment))
 ```
+
+#### Drops
+```{r, echo=F}
+#drops
+drops <- drops.hist %>% dplyr::filter(year == "2015") %>% group_by(team) %>% summarise(drops = sum(drops)) %>% ungroup() %>% arrange(desc(drops))
+drops$rank <- c(1:nrow(drops))
+
+(drops.plot <- hc_params %>%
+  hc_add_series(name="Drops", data = subset(drops$drops, drops$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = drops$team) %>%
+  hc_title(text="Drops", align= alignment))
+
+```
+
+#### Drop Rate
+```{r, echo=F}
+#drop rate
+drop.rate <- drops.hist %>% dplyr::filter(year == "2015" & receptions > 5) %>% group_by(team) %>% summarise(drop.rate = mean(drop.rate)) %>% ungroup() %>% arrange(desc(drop.rate))
+drop.rate$rank <- c(1:nrow(drop.rate))
+
+(drop.rate.plot <- hc_params %>%
+  hc_add_series(name="Drop Rate", data = subset(drop.rate$drop.rate, drop.rate$rank <=top.n), type = plot.type)  %>%
+  hc_xAxis(categories = drop.rate$team) %>%
+  hc_title(text="Avg. Drop Rate", align= alignment) %>%
+  hc_subtitle(text = "2015 Season, Players with more than 5 catches. (Click & Drag to Zoom)"))
+
+```
+
 
 #### Fumbles
 ```{r, echo=F}
