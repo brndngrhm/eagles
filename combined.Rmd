@@ -19,14 +19,16 @@ library(lubridate)
 library(xts)
 library(knitr)
 
-# load data
+# load data ----
 season.2015.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/season.2015.csv")
 season.2015 <- as.data.frame(read.csv(text = season.2015.x, strip.white = T))
 phl.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/phl.csv")
 phl <- as.data.frame(read.csv(text = phl.x, strip.white = T))
 eagles.hist.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/eagles.hist.csv")
 eagles.hist <- as.data.frame(read.csv(text = eagles.hist.x, strip.white = T))
-rm(season.2015.x, eagles.hist.x, phl.x)
+drops.hist.x <- getURL("https://raw.githubusercontent.com/brndngrhm/eagles/master/drops.hist.csv")
+drops.hist <- as.data.frame(read.csv(text = drops.hist.x, strip.white = T))
+rm(season.2015.x, eagles.hist.x, phl.x, drops.hist.x)
 
 # global plotting parameters 
 hc_params <- highchart() %>%
@@ -719,7 +721,7 @@ names(qb)[4] <- "Touchdown Passes"
 names(qb)[5] <- "Yards Per Pass"
 names(qb)[6] <- "Interceptions"
 names(qb)[7] <- "Rushing Yards"
-names(qb)[8] <- "Fumbless"
+names(qb)[8] <- "Fumbles"
 names(qb)[9] <- "Lost Fumbles"
 qb.melt <- melt(qb, id.vars = "Name")
 
@@ -1079,7 +1081,7 @@ kafka.ts <- xts(subset(hist.pass.comp.rate$total, hist.pass.comp.rate$name == "M
 ```{r, echo=F}
 #rushing vs passing
 rush.pass <- eagles.hist %>% select(date, rush.att, pass.att) %>% group_by(date) %>% summarise_each(funs(sum))
-rush.pass$date <- ymd(hist.pass.comp.rate$date)
+rush.pass$date <- ymd(rush.pass$date)
 
 rush.ts <- xts(rush.pass$rush.att, order.by = rush.pass$date, frequency = 52)
 pass.ts <- xts(rush.pass$pass.att, order.by = rush.pass$date, frequency = 52)
