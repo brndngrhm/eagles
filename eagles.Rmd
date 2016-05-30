@@ -393,3 +393,20 @@ pass.ts <- xts(rush.pass$pass.att, order.by = rush.pass$date, frequency = 52)
   hc_scrollbar(enabled = FALSE))
 ```
 
+```{r, echo=F}
+#drops
+drops <- eagles.hist %>% select(date, pass.att, pass.comp) %>% dplyr::filter(pass.att > 5)
+drops$drops <- drops$pass.att - drops$pass.comp
+drops$date <- ymd(drops$date)
+
+drops.ts <- xts(drops$drops, order.by = drops$date, frequency = 52)
+
+(hist.comp.rate.plot <- hc_params %>%
+  highchart(type = "chart") %>% 
+  hc_add_series_xts(drops.ts, id = "Drops", name = "Dropped Passes") %>%
+  hc_title(text=paste("Dropped Passes", format(mean(drops$drops), digits=2), by=" "), align="left") %>%
+  hc_subtitle(text="2009-2015", align="left") %>%
+  hc_rangeSelector(inputEnabled = F) %>% 
+  hc_scrollbar(enabled = FALSE))
+```
+
